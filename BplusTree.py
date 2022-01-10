@@ -14,9 +14,11 @@ class BplusTree:
             node1 = node.split_node()
             self.insert_parent(node, node1.keys[0], node1)
 
+        print(self.root.keys)
+
     def search(self, key):
         node1 = self.root
-        if(not node1.leaf):
+        while(not node1.leaf):
             temp = node1.keys
             for i in range(len(temp)):     
                 if (key == temp[i]):
@@ -36,7 +38,6 @@ class BplusTree:
             rootNode.keys = [key]
             rootNode.children = [leftnode, rightnode]
             print('rootNode:', rootNode.keys)
-            
             print(rootNode.children[0].keys)
             print(rootNode.children[1].keys)
             self.root = rootNode
@@ -44,6 +45,33 @@ class BplusTree:
             leftnode.parent = rootNode
             return
     
+        parentLeft = leftnode.parent
+        temp = parentLeft.children
+        for i in range(len(temp)):
+            if (temp[i] == leftnode):
+                parentLeft.keys = parentLeft.keys[:i] + [key] + parentLeft.keys[i:]
+                parentLeft.children = parentLeft.children[:i + 1] + [rightnode] + parentLeft.children[i + 1:]
+            if (len(parentLeft.keys) > parentLeft.order * 2):
+                parentRight = Node(parentLeft.order)
+                parentRight.parent = parentLeft.parent
+                mid = parentLeft.order
+                parentRight.keys = parentLeft.keys[mid:]
+                parentRight.children = parentLeft.children[mid:]
+                value = parentLeft.keys[mid]
+                if (mid == 0):
+                    parentLeft.keys = parentLeft.keys[:mid + 1]
+                else:
+                    parentLeft.keys = parentLeft.keys[:mid]
+                parentLeft.children = parentLeft.children[:mid + 1]
+                for j in parentLeft.children:
+                    j.parent = parentLeft
+                for j in parentRight.children:
+                    print("AQUIIII")
+                    print(parentRight.children[0])
+                    print(j)
+                    j.parent = parentRight
+                self.insert_parent(parentLeft, value, parentRight)
+
     def print_tree(self):
         if not self.root:
             return None
