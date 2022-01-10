@@ -41,8 +41,8 @@ class BplusTree:
             print(rootNode.children[0].keys)
             print(rootNode.children[1].keys)
             self.root = rootNode
-            rightnode.parent = rootNode
             leftnode.parent = rootNode
+            rightnode.parent = rootNode
             return
     
         parentLeft = leftnode.parent
@@ -51,7 +51,7 @@ class BplusTree:
             if (temp[i] == leftnode):
                 parentLeft.keys = parentLeft.keys[:i] + [key] + parentLeft.keys[i:]
                 parentLeft.children = parentLeft.children[:i + 1] + [rightnode] + parentLeft.children[i + 1:]
-            if (len(parentLeft.keys) > parentLeft.order * 2):
+            if (len(parentLeft.keys) == parentLeft.order * 2):
                 parentRight = Node(parentLeft.order)
                 parentRight.parent = parentLeft.parent
                 mid = parentLeft.order
@@ -63,15 +63,10 @@ class BplusTree:
                 else:
                     parentLeft.keys = parentLeft.keys[:mid]
                     parentLeft.children = parentLeft.children[:mid + 1]
-# =============================================================================
-#                 for j in parentLeft.children:
-#                     j.parent = parentLeft
-#                 for j in parentRight.children:
-#                     print("AQUIIII")
-#                     print(parentRight.children[0])
-#                     print(j)
-#                     j.parent = parentRight
-# =============================================================================
+                for j in parentLeft.children:
+                    j.parent = parentLeft
+                for j in parentRight.children:
+                    j.parent = parentRight
                 self.insert_parent(parentLeft, value, parentRight)
 
     def print_tree(self):

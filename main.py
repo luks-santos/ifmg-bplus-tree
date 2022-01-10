@@ -1,6 +1,8 @@
 from BplusTree import BplusTree
 
 arvore = BplusTree(2)
+
+
 while(True):
     #caso queira mostrar os valores da arvore
     #bMais.mostrarBmais()
@@ -14,7 +16,7 @@ while(True):
     if n == 1:
         numero = int(input("Digite o valor para ser inserido: "))
         arvore.insert(numero)
-    elif n== 2:
+    elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
 
     elif n == 3:
