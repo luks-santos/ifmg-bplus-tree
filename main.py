@@ -27,4 +27,4 @@ while(True):
     elif  n== 5:
         arvore.print_tree()
     else:
-        break;
+        break

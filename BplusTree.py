@@ -62,14 +62,16 @@ class BplusTree:
                     parentLeft.keys = parentLeft.keys[:mid + 1]
                 else:
                     parentLeft.keys = parentLeft.keys[:mid]
-                parentLeft.children = parentLeft.children[:mid + 1]
-                for j in parentLeft.children:
-                    j.parent = parentLeft
-                for j in parentRight.children:
-                    print("AQUIIII")
-                    print(parentRight.children[0])
-                    print(j)
-                    j.parent = parentRight
+                    parentLeft.children = parentLeft.children[:mid + 1]
+# =============================================================================
+#                 for j in parentLeft.children:
+#                     j.parent = parentLeft
+#                 for j in parentRight.children:
+#                     print("AQUIIII")
+#                     print(parentRight.children[0])
+#                     print(j)
+#                     j.parent = parentRight
+# =============================================================================
                 self.insert_parent(parentLeft, value, parentRight)
 
     def print_tree(self):

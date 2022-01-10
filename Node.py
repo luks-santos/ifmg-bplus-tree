@@ -10,15 +10,14 @@ class Node:
     
     def insert_key_leaf(self, key):
         if len(self.keys):
-            temp1 = self.keys
             for i in range(len(self.keys)):
-                if key == temp1[i]:
+                if (key == self.keys[i]):
                     self.keys = self.keys[:i] + [key] + self.keys[i:]
                     break
-                elif key < temp1[i]:
+                elif (key < self.keys[i]):
                     self.keys = self.keys[:i] + [key] + self.keys[i:]
                     break
-                elif i + 1 == len(temp1):
+                elif (i + 1 == len(self.keys)):
                     self.keys.append(key)
                     break
         else:
@@ -30,10 +29,9 @@ class Node:
         node.parent = self.parent
         mid = self.order 
         node.keys = self.keys[mid:]
-        #node.children = self.children[mid+1:]
         node.nextKey = self.nextKey
+        node.previousKey = self
         self.keys = self.keys[:mid]
-        #self.children = self.children[:mid +1]
         self.nextKey = node
         return node
         
