@@ -76,9 +76,7 @@ class BplusTree:
         node = self.root
         while not node.leaf:
             node = node.children[0]
-        
-        while node:
-            for valorDaFolha in node.keys:
-                 print('[{}]'.format(', '.join(map(str, str(valorDaFolha)))), end=' -> ')
 
+        while node:
+            print('{}'.format(node.keys), end=' -> ')
             node = node.nextKey

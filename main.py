@@ -23,7 +23,6 @@ while(True):
         numero = int(input("Digite o valor para ser buscado: "))
         
     elif  n== 4:
-        
         numero1 = int (input("Digite o primeiro valor para ser buscado: "))
         numero2 = int (input("Digite o segundo valor para ser buscado: "))
     elif  n== 5:
