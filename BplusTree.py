@@ -55,17 +55,24 @@ class BplusTree:
                 parentRight = Node(parentLeft.order)
                 parentRight.parent = parentLeft.parent
                 mid = parentLeft.order
-                parentRight.keys = parentLeft.keys[mid:]
-                parentRight.children = parentLeft.children[mid:]
+                parentRight.keys = parentLeft.keys[mid + 1:]
+                parentRight.children = parentLeft.children[mid + 1:]
                 value = parentLeft.keys[mid]
-                if (mid == 0):
-                    parentLeft.keys = parentLeft.keys[:mid + 1]
-                else:
-                    parentLeft.keys = parentLeft.keys[:mid]
-                    parentLeft.children = parentLeft.children[:mid + 1]
+                
+                parentLeft.keys = parentLeft.keys[:mid]
+                parentLeft.children = parentLeft.children[:mid + 1]
+                print("direita:")
+                print(parentRight.keys)
+                print("esquerda:")
+                print(parentLeft.keys)
+
                 for j in parentLeft.children:
+                    print("filho esquerda")
+                    print(j.keys)
                     j.parent = parentLeft
                 for j in parentRight.children:
+                    print("filho direita")
+                    print(j.keys)
                     j.parent = parentRight
                 self.insert_parent(parentLeft, value, parentRight)
 
@@ -80,3 +87,25 @@ class BplusTree:
         while node:
             print('{}'.format(node.keys), end=' -> ')
             node = node.nextKey
+
+def printTree(tree):
+    lst = [tree.root]
+    level = [0]
+    leaf = None
+    flag = 0
+    lev_leaf = 0
+
+  
+    while (len(lst) != 0):
+        x = lst.pop(0)
+        lev = level.pop(0)
+        if (x.leaf == False):
+            for i, item in enumerate(x.children):
+                print(item.keys)
+        else:
+            for i, item in enumerate(x.keys):
+                print(item.values)
+            if (flag == 0):
+                lev_leaf = lev
+                leaf = x
+                flag = 1

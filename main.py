@@ -1,7 +1,13 @@
 from BplusTree import BplusTree
 
 arvore = BplusTree(2)
+x = [1,2,3,4]
+j = [1,2,3,4,5]
+print(x[3:])
+print(x[:2])
 
+print(j[3:])
+print(j[:3])
 
 while(True):
     #caso queira mostrar os valores da arvore
