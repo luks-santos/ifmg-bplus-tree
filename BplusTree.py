@@ -39,10 +39,10 @@ class BplusTree:
                     node.keys.append(rightnode.keys[0])
                     self.delete_key(rightnode, rightnode.keys[0])
                     self.delete_key(node, key)
-                    self.key_is_index(node.parent, value_)
+                    x,y = self.key_is_index(node.parent,value_)
+                    node.parent.keys[y] = rightnode.keys[0]
                     
-
-
+                
                     print("começa aq")
                     print(node.keys)
                     print(rightnode.keys)
