@@ -16,6 +16,22 @@ class BplusTree:
 
         print(self.root.keys)
 
+    def delete(self, key):
+        node = self.search(key)
+        if(node == self.root):
+            self.delete_key(node, key)
+            print("é raiz")
+            return
+       
+        parentNode, index = self.key_is_index(node.parent, key)
+        #Caso 1.a - Tem quantidade mínima para remoção e não tem índice acima
+        if(not parentNode and len(node.keys) > self.root.order):
+            self.delete_key(node, key)
+
+                
+
+
+
     def search(self, key):
         node1 = self.root
         while(not node1.leaf):
@@ -76,6 +92,23 @@ class BplusTree:
                     j.parent = parentRight
                 self.insert_parent(parentLeft, value, parentRight)
 
+    #teste
+    def delete_key(self, node, key):
+        if len(node.keys):
+            print(node.keys)
+            index = node.keys.index(key)
+            node.keys.pop(index)
+            print(node.keys)
+
+    #deve passar no node o pai imediato
+    def key_is_index(self, node, key):
+        while(node):
+            for i, item in enumerate(node.keys):
+                if(item == key):
+                    return item, i
+            node = node.parent
+        return 0, 0
+
     def print_tree(self):
         if not self.root:
             return None
@@ -87,25 +120,3 @@ class BplusTree:
         while node:
             print('{}'.format(node.keys), end=' -> ')
             node = node.nextKey
-
-def printTree(tree):
-    lst = [tree.root]
-    level = [0]
-    leaf = None
-    flag = 0
-    lev_leaf = 0
-
-  
-    while (len(lst) != 0):
-        x = lst.pop(0)
-        lev = level.pop(0)
-        if (x.leaf == False):
-            for i, item in enumerate(x.children):
-                print(item.keys)
-        else:
-            for i, item in enumerate(x.keys):
-                print(item.values)
-            if (flag == 0):
-                lev_leaf = lev
-                leaf = x
-                flag = 1

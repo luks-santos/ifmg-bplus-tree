@@ -1,14 +1,6 @@
 from BplusTree import BplusTree
 
 arvore = BplusTree(2)
-x = [1,2,3,4]
-j = [1,2,3,4,5]
-print(x[3:])
-print(x[:2])
-
-print(j[3:])
-print(j[:3])
-
 while(True):
     #caso queira mostrar os valores da arvore
     #bMais.mostrarBmais()
@@ -24,7 +16,7 @@ while(True):
         arvore.insert(numero)
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
-
+        arvore.delete(numero)
     elif n == 3:
         numero = int(input("Digite o valor para ser buscado: "))
         
