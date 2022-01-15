@@ -18,6 +18,8 @@ class BplusTree:
 
     def delete(self, key):
         node = self.search(key)
+
+        #Caso 0 - Só tem chaves na raiz, ainda não houve divisão
         if(node == self.root):
             self.delete_key(node, key)
             print("é raiz")
@@ -28,11 +30,17 @@ class BplusTree:
         if(not parentNode and len(node.keys) > self.root.order):
             self.delete_key(node, key)
 
-        #Caso 2.a - Não tem quantidade mínima para remoção e não tem índice acima
+        #Caso 1.b - Não tem quantidade mínima para remoção e não tem índice acima
         elif(not parentNode and len(node.keys) == self.root.order):
             i = node.parent.children.index(node)
-            #pegar emprestado irmão da direita
-            if(i == 1):
+            
+            if(i == 0):
+                #pedir o irmão da direita 
+                print("ok")
+            elif(i == len(node.children)):
+                #pedir o irmão da direita
+                print("ok")
+            elif(i == 1):
                 rightnode = node.nextKey
                 if(len(rightnode.keys) > self.root.order):
                     value_ = rightnode.keys[0]
