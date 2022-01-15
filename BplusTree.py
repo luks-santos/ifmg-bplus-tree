@@ -32,15 +32,32 @@ class BplusTree:
 
         #Caso 1.b - Não tem quantidade mínima para remoção e não tem índice acima
         elif(not parentNode and len(node.keys) == self.root.order):
-            i = node.parent.children.index(node)
-            
-            if(i == 0):
-                #pedir o irmão da direita 
+            #tratar verificação de pais diferentes
+            neighborLeft = node.previousKey
+            neighborRight = node.nextKey
+
+            if(neighborLeft and len(neighborLeft.keys) > self.root.order):
+                node.insert_key_leaf(neighborLeft.keys.pop())  
+                self.delete_key(node, key)
+                print("Irmão da esquerda no remove")
+                print(neighborLeft.keys)
+                print("Irmão da direita no remove")
+                print(neighborRight.keys)
+                print("Node")
+                print(node.keys)
+
+            elif(neighborRight and len(neighborRight.keys > self.root.order)):
+                node.insert_key_leaf(neighborRight.keys.pop(0))  
+                self.delete_key(node, key)
+                print("Irmão da esquerda no remove")
+                print(neighborLeft.keys)
+                print("Irmão da direita no remove")
+                print(neighborRight.keys)
+                print("Node")
+                print(node.keys)
                 print("ok")
-            elif(i == len(node.children)):
-                #pedir o irmão da direita
-                print("ok")
-            elif(i == 1):
+                
+            """ elif(i == 1):
                 rightnode = node.nextKey
                 if(len(rightnode.keys) > self.root.order):
                     value_ = rightnode.keys[0]
@@ -56,8 +73,7 @@ class BplusTree:
                     print(rightnode.keys)
                     print(node.parent.keys)
                     print("termina aq")
-
-
+            """
     def search(self, key):
         node1 = self.root
         while(not node1.leaf):
