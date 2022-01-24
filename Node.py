@@ -1,10 +1,10 @@
 class Node:
     def __init__(self, order) -> None:
         self.order = order
-        self.leaf = False
+        self.is_leaf = False
         self.parent = None
-        self.nextKey = None
-        self.previousKey = None
+        self.next_key = None
+        self.previous_key = None
         self.keys = []
         self.children = []
     
@@ -12,28 +12,39 @@ class Node:
         if len(self.keys):
             for i in range(len(self.keys)):
                 if (key == self.keys[i]):
-                    self.keys = self.keys[:i] + [key] + self.keys[i:]
-                    break
+                    print("ID já existe!")
+                    return -1
                 elif (key < self.keys[i]):
                     self.keys = self.keys[:i] + [key] + self.keys[i:]
-                    break
+                    return 0
                 elif (i + 1 == len(self.keys)):
                     self.keys.append(key)
-                    break
+                    return 0
         else:
             self.keys.append(key)
+            return 0
             
-    def split_node(self):
-        node = Node(self.order) 
-        node.leaf = True
-        node.parent = self.parent
-        mid = self.order 
-        node.keys = self.keys[mid:]
-        node.nextKey = self.nextKey
-        node.previousKey = self
-        self.keys = self.keys[:mid]
-        self.nextKey = node
-        return node
+    def split_node(self, key):
+        node_right = Node(self.order) 
+        node_right.is_leaf = True
+        node_right.keys = self.keys[self.order:]
+        self.keys = self.keys[:self.order]
         
+        if self.keys[self.order - 1] < key:
+            if node_right.insert_key_leaf(key) == -1:
+                self.keys = self.keys[:self.order] + node_right.keys[:self.order]
+                del node_right
+                return None
+        else:
+            if self.insert_key_leaf(key) == -1:
+                self.keys = self.keys[:self.order] + node_right.keys[:self.order]
+                del node_right
+                return None
+
+        node_right.parent = self.parent
+        node_right.next_key = self.next_key
+        node_right.previous_key = self
+        self.next_key = node_right
+        return node_right
         
         
