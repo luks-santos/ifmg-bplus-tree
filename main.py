@@ -1,9 +1,10 @@
 from BplusTree import BplusTree
-
+import sys
 arvore = BplusTree(2)
 while(True):
     #caso queira mostrar os valores da arvore
     #bMais.mostrarBmais()
+    
     print("\n1 - Inserir valor na Árvore")
     print("2 - Remover valor na Árvore")
     print("3 - Buscar valor na Árvore")

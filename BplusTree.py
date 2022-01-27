@@ -3,11 +3,10 @@ from Node import Node
 class BplusTree:
     def __init__(self, order) -> None:
         self.root = Node(order)
-        self.root.leaf = True
+        self.root.is_leaf = True
     
     def insert(self, key):
         node = self.__search(key)
-        
         if (len(node.keys) == (2*self.root.order)):
             node_right = node.split_node(key)
             if(node_right):
@@ -20,16 +19,18 @@ class BplusTree:
         node_ = self.root
         while(not node_.is_leaf):
             temp = node_.keys
+            print(temp[0])
             for i in range(len(temp)):     
-                if (key == temp[i]):
+                if (key == temp[i][0]):
                     node_ = node_.children[i + 1]
                     break
-                elif (key < temp[i]):
+                elif (key < temp[i][0]):
                     node_ = node_.children[i]
                     break
                 elif (i + 1 == len(node_.keys)):
                     node_ = node_.children[i + 1]
                     break
+            
         return node_
 
     def delete(self, key):
@@ -91,7 +92,7 @@ class BplusTree:
                     print("termina aq")
             """
     
-     def __insert_parent(self, node_left, key, node_right):
+    def __insert_parent(self, node_left, key, node_right):
         if (self.root == node_left):
             node_root = Node(self.root.order)
             node_root.keys = [key]
@@ -160,9 +161,9 @@ class BplusTree:
             return None
         
         node = self.root
-        while not node.leaf:
+        while not node.is_leaf:
             node = node.children[0]
 
         while node:
             print('{}'.format(node.keys), end=' -> ')
-            node = node.nextKey
+            node = node.next_key

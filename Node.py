@@ -11,17 +11,17 @@ class Node:
     def insert_key_leaf(self, key):
         if len(self.keys):
             for i in range(len(self.keys)):
-                if (key == self.keys[i]):
-                    print("ID já existe!")
+                if (key == self.keys[i][0]):
+                    self.keys[i].append(key)
                     return -1
-                elif (key < self.keys[i]):
-                    self.keys = self.keys[:i] + [key] + self.keys[i:]
+                elif (key < self.keys[i][0]):
+                    self.keys = self.keys[:i] + [[key]] + self.keys[i:]
                     return 0
                 elif (i + 1 == len(self.keys)):
-                    self.keys.append(key)
+                    self.keys.append([key])
                     return 0
         else:
-            self.keys.append(key)
+            self.keys.append([key])
             return 0
             
     def split_node(self, key):
@@ -30,7 +30,7 @@ class Node:
         node_right.keys = self.keys[self.order:]
         self.keys = self.keys[:self.order]
         
-        if self.keys[self.order - 1] < key:
+        if self.keys[self.order - 1][0] < key:
             if node_right.insert_key_leaf(key) == -1:
                 self.keys = self.keys[:self.order] + node_right.keys[:self.order]
                 del node_right
