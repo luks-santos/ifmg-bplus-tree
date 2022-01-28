@@ -27,17 +27,18 @@ class Node:
     def split_node(self, key):
         node_right = Node(self.order) 
         node_right.is_leaf = True
-        node_right.keys = self.keys[self.order:]
-        self.keys = self.keys[:self.order]
+        mid = self.order//2
+        node_right.keys = self.keys[(mid):]
+        self.keys = self.keys[:mid]
         
-        if self.keys[self.order - 1][0] < key:
+        if self.keys[mid - 1][0] < key:
             if node_right.insert_key_leaf(key) == -1:
-                self.keys = self.keys[:self.order] + node_right.keys[:self.order]
+                self.keys = self.keys[:mid] + node_right.keys[:mid]
                 del node_right
                 return None
         else:
             if self.insert_key_leaf(key) == -1:
-                self.keys = self.keys[:self.order] + node_right.keys[:self.order]
+                self.keys = self.keys[:mid] + node_right.keys[:mid]
                 del node_right
                 return None
 
