@@ -5,32 +5,34 @@ class BplusTree:
         self.root = Node(order)
         self.root.is_leaf = True
     
-    def insert(self, key):
+    def insert(self, key, record):
         node = self.__search(key)
-        if (len(node.keys) == (self.root.order)):
-            node_right = node.split_node(key)
-            if(node_right):
-                self.__insert_parent(node, node_right.keys[0], node_right)
-        else:
-            node.insert_key_leaf(key)
-        print(self.root.keys)
+        if (node):
+            if (len(node.keys) == (self.root.order)):
+                node_right = node.split_node(key, record)
+                if(node_right):
+                    self.__insert_parent(node, node_right.keys[0][0], node_right)
+            else:
+                node.insert_key_leaf(key, record)
+            print(self.root.keys)
 
     def __search(self, key):
         node_ = self.root
         while(not node_.is_leaf):
             temp = node_.keys
-            print(temp[0])
             for i in range(len(temp)):     
-                if (key == temp[i][0]):
+                if (key == temp[i]):
                     node_ = node_.children[i + 1]
                     break
-                elif (key < temp[i][0]):
+                elif (key < temp[i]):
                     node_ = node_.children[i]
                     break
                 elif (i + 1 == len(node_.keys)):
                     node_ = node_.children[i + 1]
                     break
-            
+        for item in node_.keys:
+            if item[0] == key:
+                return None
         return node_
 
     def delete(self, key):

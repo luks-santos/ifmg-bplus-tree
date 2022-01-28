@@ -1,8 +1,7 @@
 from BplusTree import BplusTree
 import sys
-registro = sys.getsizeof([1,2,3,4,5]) # Para um registro de 5 campos cada um terá 120 bytes
-ordem = (500//registro)
-
+import random
+ordem = (400//sys.getsizeof([1,2,3,4,5]))
 arvore = BplusTree(ordem)
 while(True):
     #caso queira mostrar os valores da arvore
@@ -15,8 +14,8 @@ while(True):
     print("0 - sair")
     n = int(input("Digite uma opção: "))
     if n == 1:
-        numero = int(input("Digite o valor para ser inserido: "))
-        arvore.insert(numero)
+        key = int(input("Digite o valor para ser inserido: "))
+        arvore.insert(key,  [key, random.randint(1, 15000),  random.randint(1, 15000),  random.randint(1, 15000)])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)
