@@ -1,11 +1,7 @@
 from BplusTree import BplusTree
-import sys
-import random
-ordem = (400//sys.getsizeof([1,2,3,4,5]))
-arvore = BplusTree(ordem)
+
+arvore = BplusTree(3)
 while(True):
-    #caso queira mostrar os valores da arvore
-    #bMais.mostrarBmais()
     print("\n1 - Inserir valor na Árvore")
     print("2 - Remover valor na Árvore")
     print("3 - Buscar valor na Árvore")
@@ -14,8 +10,10 @@ while(True):
     print("0 - sair")
     n = int(input("Digite uma opção: "))
     if n == 1:
-        key = int(input("Digite o valor para ser inserido: "))
-        arvore.insert(key,  [key, random.randint(1, 15000),  random.randint(1, 15000),  random.randint(1, 15000)])
+        #key = int(input("Digite o valor para ser inserido: "))
+        keys = [29, 33, 45, 77, 28, 30, 80, 100, 50, 46, 1, 37, 2]
+        for i in keys:
+            arvore.insert(i, [i])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)

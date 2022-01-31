@@ -1,7 +1,6 @@
 from math import ceil
 
 class Node:
-
     def __init__(self, order) -> None:
         self.order = order
         self.is_leaf = False
@@ -28,18 +27,28 @@ class Node:
         node_right = Node(self.order) 
         node_right.is_leaf = True
         mid = ceil(self.order/2)
-        node_right.keys = self.keys[(mid):]
+        
+        print('MID:', mid)
+
+        self.insert_key_leaf(key, record)
+        node_right.keys = self.keys[mid:]
+        self.keys = self.keys[:mid]
+
+        print('No esquerdo depois do split: ', self.keys)
+        print('No direito depois do split: ', node_right.keys)
+
+        """ node_right.keys = self.keys[mid:]
         self.keys = self.keys[:mid]
         
         if self.keys[mid - 1][0] < key:
             node_right.insert_key_leaf(key, record)   
         else:
-            self.insert_key_leaf(key, record)
+            self.insert_key_leaf(key, record) """
                
         node_right.parent = self.parent
         node_right.next_key = self.next_key
         node_right.previous_key = self
         self.next_key = node_right
         return node_right
-        
+    
         

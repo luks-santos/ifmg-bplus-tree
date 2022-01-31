@@ -1,5 +1,5 @@
 from Node import Node
-
+from math import ceil
 class BplusTree:
     def __init__(self, order) -> None:
         self.root = Node(order)
@@ -14,7 +14,7 @@ class BplusTree:
                     self.__insert_parent(node, node_right.keys[0][0], node_right)
             else:
                 node.insert_key_leaf(key, record)
-            print(self.root.keys)
+            print('Raiz: ', self.root.keys)
 
     def __search(self, key):
         node_ = self.root
@@ -34,6 +34,75 @@ class BplusTree:
             if item[0] == key:
                 return None
         return node_
+
+    def __insert_parent(self, node_left, key, node_right):
+        if (self.root == node_left):
+            node_root = Node(self.root.order)
+            node_root.keys = [key]
+            node_root.children = [node_left, node_right]
+            print('node_root:', node_root.keys)
+            print('Filho esquerda raiz:', node_root.children[0].keys)
+            print('Filho direita raiz:', node_root.children[1].keys)
+            self.root = node_root
+            node_left.parent = node_root
+            node_right.parent = node_root
+        else:
+            parent_left = node_left.parent
+            temp = parent_left.children
+            for i in range(len(temp)):
+                if (temp[i] == node_left and len(parent_left.keys) == (self.root.order)):
+                    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    parent_right = Node(self.root.order)
+                    parent_right.parent = parent_left.parent
+                    mid = ceil(parent_left.order/2)
+                    
+                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
+                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
+                    print('KEYS P ESQUERDA:', parent_left.keys)
+                    print('FILHOS ESQUERDA: ')
+                    for k in parent_left.children:
+                        print(k.keys)
+
+                    value = parent_left.keys[mid]
+
+                    parent_right.keys = parent_left.keys[mid + 1:]
+                    parent_right.children = parent_left.children[mid + 1:]
+                    print('KEYS P DIREITA:',  parent_right.keys)
+                    print('FILHOS DIREITA: ')
+                    for k in parent_right.children:
+                        print(k.keys)
+
+                    parent_left.keys = parent_left.keys[:mid] 
+                    parent_left.children = parent_left.children[:mid + 1]
+                    print('KEYS P ESQUERDA:', parent_left.keys)
+                    print('FILHOS ESQUERDA: ')
+                    for k in parent_left.children:
+                        print(k.keys)
+
+                    for j in parent_left.children:
+                        print("filho esquerda")
+                        print(j.keys)
+                        j.parent = parent_left
+                    for j in parent_right.children:
+                        print("filho direita")
+                        print(j.keys)
+                        j.parent = parent_right
+
+                    self.__insert_parent(parent_left, value, parent_right)
+                    print("++++++++++++++++++++++++++++++++++++++++++++++++")
+                    break
+                elif (temp[i] == node_left):
+                    print('Filhos no esquerda')
+                    for k in parent_left.children:
+                        print(k.keys)
+                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
+                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
+
+                    print("Subi uma chave para raiz ficou com", len(parent_left.keys), "chaves")
+                    print('Filhos no esquerda')
+                    for k in parent_left.children:
+                        print(k.keys)
+                    break
 
     def delete(self, key):
         node = self.search(key)
@@ -93,54 +162,6 @@ class BplusTree:
                     print(node.parent.keys)
                     print("termina aq")
             """
-    
-    def __insert_parent(self, node_left, key, node_right):
-        if (self.root == node_left):
-            node_root = Node(self.root.order)
-            node_root.keys = [key]
-            node_root.children = [node_left, node_right]
-            print('node_root:', node_root.keys)
-            print(node_root.children[0].keys)
-            print(node_root.children[1].keys)
-            self.root = node_root
-            node_left.parent = node_root
-            node_right.parent = node_root
-        else:
-            parent_left = node_left.parent
-            temp = parent_left.children
-            for i in range(len(temp)):
-                if (temp[i] == node_left and len(parent_left.keys) == (self.root.order)):
-                    parent_right = Node(self.root.order)
-                    parent_right.parent = parent_left.parent
-                    mid = parent_left.order
-                    parent_right.keys = parent_left.keys[mid:]
-                    parent_right.children = parent_left.children[mid:]
-                    value = parent_left.keys[mid - 1]
-                    
-                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:mid - 1]
-                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:mid]
-    
-                    print("direita:")
-                    print(parent_right.keys)
-                    print("esquerda:")
-                    print(parent_left.keys)
-
-                    for j in parent_left.children:
-                        print("filho esquerda")
-                        print(j.keys)
-                        j.parent = parent_left
-                    for j in parent_right.children:
-                        print("filho direita")
-                        print(j.keys)
-                        j.parent = parent_right
-                    self.__insert_parent(parent_left, value, parent_right)
-                elif (temp[i] == node_left):
-                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
-                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
-                    print("Subi uma chave para raiz ficou com", len(parent_left.keys), "chaves")
-                    break
-
-
     #teste
     def delete_key(self, node, key):
         if len(node.keys):
