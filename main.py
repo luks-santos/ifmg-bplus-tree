@@ -11,9 +11,9 @@ while(True):
     n = int(input("Digite uma opção: "))
     if n == 1:
         #key = int(input("Digite o valor para ser inserido: "))
-        keys = [29, 33, 45, 77, 28, 30, 80, 100, 50, 46, 1, 37, 2]
-        for i in keys:
-            arvore.insert(i, [i])
+        key = int(input("informe uma chave: "))
+        
+        arvore.insert(key, [key])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)

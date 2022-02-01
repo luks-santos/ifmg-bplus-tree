@@ -9,7 +9,10 @@ class Node:
         self.previous_key = None
         self.keys = []
         self.children = []
-    
+
+    def get_order(self):
+        return self.order
+
     def insert_key_leaf(self, key, record):
         if len(self.keys):
             for i in range(len(self.keys)):
@@ -24,7 +27,7 @@ class Node:
             return 0
             
     def split_node(self, key, record):
-        node_right = Node(self.order) 
+        node_right = Node(self.get_order()) 
         node_right.is_leaf = True
         mid = ceil(self.order/2)
         

@@ -8,7 +8,7 @@ class BplusTree:
     def insert(self, key, record):
         node = self.__search(key)
         if (node):
-            if (len(node.keys) == (self.root.order)):
+            if (len(node.keys) == (node.get_order())):
                 node_right = node.split_node(key, record)
                 if(node_right):
                     self.__insert_parent(node, node_right.keys[0][0], node_right)
@@ -37,7 +37,7 @@ class BplusTree:
 
     def __insert_parent(self, node_left, key, node_right):
         if (self.root == node_left):
-            node_root = Node(self.root.order)
+            node_root = Node(4)
             node_root.keys = [key]
             node_root.children = [node_left, node_right]
             print('node_root:', node_root.keys)
@@ -52,7 +52,7 @@ class BplusTree:
             for i in range(len(temp)):
                 if (temp[i] == node_left and len(parent_left.keys) == (self.root.order)):
                     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-                    parent_right = Node(self.root.order)
+                    parent_right = Node(4)
                     parent_right.parent = parent_left.parent
                     mid = ceil(parent_left.order/2)
                     
