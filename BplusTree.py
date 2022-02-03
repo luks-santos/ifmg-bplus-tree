@@ -30,9 +30,6 @@ class BplusTree:
                 elif (i + 1 == len(node_.keys)):
                     node_ = node_.children[i + 1]
                     break
-        for item in node_.keys:
-            if item[0] == key:
-                return None
         return node_
 
     def __insert_parent(self, node_left, key, node_right):
@@ -104,27 +101,30 @@ class BplusTree:
                         print(k.keys)
                     break
 
-    def delete(self, key):
-        node = self.search(key)
 
+    #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
+    def delete(self, key):
+        node = self.__search(key)
+        print("node: " , node)
         #Caso 0 - Só tem chaves na raiz, ainda não houve divisão
         if(node == self.root):
+            print("cheguei aqui?")
             self.delete_key(node, key)
             print("é raiz")
             return
        
         parentNode, index = self.key_is_index(node.parent, key)
         #Caso 1.a - Tem quantidade mínima para remoção e não tem índice acima
-        if(not parentNode and len(node.keys) > self.root.order):
+        if(len(node.keys) > ceil(node.get_order()/2)):
             self.delete_key(node, key)
 
         #Caso 1.b - Não tem quantidade mínima para remoção e não tem índice acima
-        elif(not parentNode and len(node.keys) == self.root.order):
+        elif(not parentNode and len(node.keys) == node.get_order()):
             #tratar verificação de pais diferentes
-            neighborLeft = node.previousKey
-            neighborRight = node.nextKey
+            neighborLeft = node.previous_key
+            neighborRight = node.next_key
 
-            if(neighborLeft and len(neighborLeft.keys) > self.root.order):
+            if(neighborLeft and len(neighborLeft.keys) > node.get_order()):
                 node.insert_key_leaf(neighborLeft.keys.pop())  
                 self.delete_key(node, key)
                 print("Irmão da esquerda no remove")
@@ -166,8 +166,12 @@ class BplusTree:
     def delete_key(self, node, key):
         if len(node.keys):
             print(node.keys)
-            index = node.keys.index(key)
-            node.keys.pop(index)
+            for i,item in enumerate(node.keys):
+                if item[0] == key:
+                    node.keys.pop(i)
+                    print("indice: ", i)
+                    break
+            
             print(node.keys)
 
     #deve passar no node o pai imediato

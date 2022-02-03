@@ -13,7 +13,7 @@ while(True):
         #key = int(input("Digite o valor para ser inserido: "))
         key = int(input("informe uma chave: "))
         
-        arvore.insert(key, [key])
+        arvore.insert(key, [key,1,2,3])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)
