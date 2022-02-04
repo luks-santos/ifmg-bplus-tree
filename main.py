@@ -1,7 +1,7 @@
 from BplusTree import BplusTree
 
 arvore = BplusTree(3)
-while(True):
+while(True):            
     print("\n1 - Inserir valor na Árvore")
     print("2 - Remover valor na Árvore")
     print("3 - Buscar valor na Árvore")

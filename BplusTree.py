@@ -100,7 +100,16 @@ class BplusTree:
                     for k in parent_left.children:
                         print(k.keys)
                     break
-
+    
+    def lend(self,node_lend,node,side):
+        if(side == 0):
+            record = node_lend.keys[len(node_lend.keys)-1]
+            node_lend.keys.pop()
+            node.insert_key_leaf(record[0], record)  
+        elif(side == 1):
+            record = node_lend.keys[0]
+            node_lend.keys.pop(0)
+            node.insert_key_leaf(record[0], record)          
 
     #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
     def delete(self, key):
@@ -113,55 +122,35 @@ class BplusTree:
             print("é raiz")
             return
        
-        parentNode, index = self.key_is_index(node.parent, key)
         #Caso 1.a - Tem quantidade mínima para remoção e não tem índice acima
         if(len(node.keys) > ceil(node.get_order()/2)):
             self.delete_key(node, key)
 
         #Caso 1.b - Não tem quantidade mínima para remoção e não tem índice acima
-        elif(not parentNode and len(node.keys) == node.get_order()):
+        elif(len(node.keys) == ceil(node.get_order()/2)):
             #tratar verificação de pais diferentes
             neighborLeft = node.previous_key
             neighborRight = node.next_key
-
-            if(neighborLeft and len(neighborLeft.keys) > node.get_order()):
-                node.insert_key_leaf(neighborLeft.keys.pop())  
+            if(neighborLeft and neighborLeft.parent == node.parent and len(neighborLeft.keys) > ceil(node.get_order()/2)):
+                self.lend(neighborLeft,node,0)
                 self.delete_key(node, key)
-                print("Irmão da esquerda no remove")
-                print(neighborLeft.keys)
-                print("Irmão da direita no remove")
-                print(neighborRight.keys)
-                print("Node")
-                print(node.keys)
+                for i in range(len(node.parent.keys)):
+                    print( "i: ", node.parent.keys)
+                    if(node.keys[0][0] <= node.parent.keys[i]):
+                        node.parent.keys[i] = node.keys[0][0]
+                        break
+                print("mudanças: " , node.parent.keys)
+            elif(neighborRight and neighborRight.parent == node.parent and len(neighborRight.keys) > ceil(node.get_order()/2)):
+                self.lend(neighborRight,node,1)
+                self.delete_key(node,key)
+                for i in range(len(node.parent.keys)-1,-1,-1):
+                    print( "i: ", node.parent.keys)
+                    print( "if: ", node.keys[0][0], " - ", node.parent.keys[i])
+                    if(neighborRight.keys[0][0] >= node.parent.keys[i]):
+                        node.parent.keys[i] = neighborRight.keys[0][0]
+                        break
+                print("mudanças: " , node.parent.keys)
 
-            elif(neighborRight and len(neighborRight.keys > self.root.order)):
-                node.insert_key_leaf(neighborRight.keys.pop(0))  
-                self.delete_key(node, key)
-                print("Irmão da esquerda no remove")
-                print(neighborLeft.keys)
-                print("Irmão da direita no remove")
-                print(neighborRight.keys)
-                print("Node")
-                print(node.keys)
-                print("ok")
-                
-            """ elif(i == 1):
-                rightnode = node.nextKey
-                if(len(rightnode.keys) > self.root.order):
-                    value_ = rightnode.keys[0]
-                    node.keys.append(rightnode.keys[0])
-                    self.delete_key(rightnode, rightnode.keys[0])
-                    self.delete_key(node, key)
-                    x,y = self.key_is_index(node.parent,value_)
-                    node.parent.keys[y] = rightnode.keys[0]
-                    
-                
-                    print("começa aq")
-                    print(node.keys)
-                    print(rightnode.keys)
-                    print(node.parent.keys)
-                    print("termina aq")
-            """
     #teste
     def delete_key(self, node, key):
         if len(node.keys):
@@ -173,15 +162,6 @@ class BplusTree:
                     break
             
             print(node.keys)
-
-    #deve passar no node o pai imediato
-    def key_is_index(self, node, key):
-        while(node):
-            for i, item in enumerate(node.keys):
-                if(item == key):
-                    return item, i
-            node = node.parent
-        return 0, 0
 
     def print_tree(self):
         if not self.root:
