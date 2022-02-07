@@ -109,7 +109,17 @@ class BplusTree:
         elif(side == 1):
             record = node_lend.keys[0]
             node_lend.keys.pop(0)
-            node.insert_key_leaf(record[0], record)          
+            node.insert_key_leaf(record[0], record)  
+
+    def merge(self, node_merge, node):
+        node_merge.keys += node.keys
+        node_aux = node.next_key
+        node_merge.next_key = node.next_key
+        if(node_aux):
+            node_aux.previous_key = node_merge
+        del node
+        
+
 
     #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
     def delete(self, key):
@@ -150,6 +160,15 @@ class BplusTree:
                         node.parent.keys[i] = neighborRight.keys[0][0]
                         break
                 print("mudanças: " , node.parent.keys)
+            else: 
+                if(neighborLeft and neighborLeft.parent == node.parent):
+                    print("chegou aqui na esquerda!")
+                    self.delete_key(node,key)
+                    self.merge( neighborLeft, node)
+                elif(neighborRight and neighborRight.parent == node.parent):
+                    print("cheguei aqui na direita!")
+                    self.delete_key(node,key)
+                    self.merge( neighborRight, node)
 
     #teste
     def delete_key(self, node, key):
