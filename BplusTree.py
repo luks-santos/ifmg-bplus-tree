@@ -1,5 +1,6 @@
 from Node import Node
 from math import ceil
+
 class BplusTree:
     def __init__(self, order) -> None:
         self.root = Node(order)
@@ -114,12 +115,12 @@ class BplusTree:
     def merge(self, node_merge, node):
         node_merge.keys += node.keys
         node_aux = node.next_key
-        node_merge.next_key = node.next_key
+        node_merge.next_key = node_aux
         if(node_aux):
             node_aux.previous_key = node_merge
         del node
+        return node_merge
         
-
 
     #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
     def delete(self, key):
@@ -136,11 +137,10 @@ class BplusTree:
         if(len(node.keys) > ceil(node.get_order()/2)):
             self.delete_key(node, key)
 
-        #Caso 1.b - Não tem quantidade mínima para remoção e não tem índice acima
+        #Caso 1.b - Não tem quantidade mínima para remoção
         elif(len(node.keys) == ceil(node.get_order()/2)):
             #tratar verificação de pais diferentes
             neighborLeft = node.previous_key
-            neighborRight = node.next_key
             if(neighborLeft and neighborLeft.parent == node.parent and len(neighborLeft.keys) > ceil(node.get_order()/2)):
                 self.lend(neighborLeft,node,0)
                 self.delete_key(node, key)
@@ -150,26 +150,53 @@ class BplusTree:
                         node.parent.keys[i] = node.keys[0][0]
                         break
                 print("mudanças: " , node.parent.keys)
-            elif(neighborRight and neighborRight.parent == node.parent and len(neighborRight.keys) > ceil(node.get_order()/2)):
-                self.lend(neighborRight,node,1)
-                self.delete_key(node,key)
-                for i in range(len(node.parent.keys)-1,-1,-1):
-                    print( "i: ", node.parent.keys)
-                    print( "if: ", node.keys[0][0], " - ", node.parent.keys[i])
-                    if(neighborRight.keys[0][0] >= node.parent.keys[i]):
-                        node.parent.keys[i] = neighborRight.keys[0][0]
-                        break
-                print("mudanças: " , node.parent.keys)
-            else: 
-                if(neighborLeft and neighborLeft.parent == node.parent):
-                    print("chegou aqui na esquerda!")
+                return
+            else:
+                neighborRight = node.next_key
+                if(neighborRight and neighborRight.parent == node.parent and len(neighborRight.keys) > ceil(node.get_order()/2)):
+                    self.lend(neighborRight,node,1)
                     self.delete_key(node,key)
-                    self.merge( neighborLeft, node)
-                elif(neighborRight and neighborRight.parent == node.parent):
-                    print("cheguei aqui na direita!")
-                    self.delete_key(node,key)
-                    self.merge( neighborRight, node)
+                    for i in range(len(node.parent.keys)-1,-1,-1):
+                        print( "i: ", node.parent.keys)
+                        print( "if: ", node.keys[0][0], " - ", node.parent.keys[i])
+                        if(neighborRight.keys[0][0] >= node.parent.keys[i]):
+                            node.parent.keys[i] = neighborRight.keys[0][0]
+                            break
+                    print("mudanças: " , node.parent.keys)
+                else: 
+                    node_ = None
+                    if(neighborLeft and neighborLeft.parent == node.parent):
+                        print("chegou aqui na esquerda!")
+                        self.delete_key(node, key)
+                        node_ = self.ath.pow(2, profundidadeGlobmerge(neighborLeft, node)
+                    elif(neighborRight and neighborRight.parent == node.parent):
+                        print("cheguei aqui na direita!")
+                        self.delete_key(node, key)
+                        node_ = self.merge(node, neighborRight)
+                    
+                    if(node_.parent == self.root and len(self.root.keys) == 1):
+                        node_.parent = None
+                        self.root = node_ 
+                        del node_
+                        return
+                    
+                    elif(node_.parent == self.root and len(self.root.keys) > 1):
+                        key = node_.keys[len(node_.keys) - 1][0]
+                        print('KEY AQ:', key)
+                        for i in range(len(self.root.keys)):
+                            print('AAAAkey:', key, ' <= ', self.root.keys[i])
+                            if key <= self.root.keys[i] or i == len(self.root.keys) - 1:
+                                print('enTREI AQ')
+                                if i != len(self.root.keys) - 1:
+                                    aux = self.root.keys.pop(i - 1)
+                                    print('ELIMINEI A KEY ', aux, 'DA RAIZ' )
+                                    break
+                                else:
+                                    aux = self.root.keys.pop()
+                                    print('de baixo ELIMINEI A KEY ', aux, 'DA RAIZ' )
+                                    break
 
+                            print(self.root.keys)
     #teste
     def delete_key(self, node, key):
         if len(node.keys):
