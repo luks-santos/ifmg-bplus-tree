@@ -8,6 +8,7 @@ class BplusTree:
     
     def insert(self, key, record):
         node = self.__search(key)
+        print('node no search', node.keys)
         if (node):
             if (len(node.keys) == (node.get_order())):
                 node_right = node.split_node(key, record)
@@ -106,7 +107,7 @@ class BplusTree:
         node_merge.next_key = node_aux
         if(node_aux):
             node_aux.previous_key = node_merge
-        del node
+        #del node
         return node_merge
         
 
@@ -161,8 +162,10 @@ class BplusTree:
                     if (neighbor_left and neighbor_left.parent == node.parent):
                         print('4 - FUSÃOOOOOOOO')
                         print("4 - chegou no irmão esquerda!")
+                        print("4 - neighborLeft: ", neighbor_left.keys)
                         self.delete_key(node, key)
                         index = node.parent.children.index(node)
+                        print("4 - index: ", index)
                         node_merge = self.merge(neighbor_left, node)
 
                     elif (neighbor_right and neighbor_right.parent == node.parent):
@@ -177,7 +180,7 @@ class BplusTree:
                     if (parent_node == self.root and len(self.root.keys) == 1):
                         parent_node = None
                         self.root = node_merge
-                        del node_merge
+                        #del node_merge
                         return
                 
                     elif (len(parent_node.keys) > 1):
@@ -193,7 +196,7 @@ class BplusTree:
                             parent_node.keys.pop(index)
                         
                         elif (index == len(parent_node.keys)):
-                            print('ENTREI NO CASO 1 DA FUSÃO')
+                            print('ENTREI NO CASO 3 DA FUSÃO')
                             parent_node.children.pop(-1)
                             parent_node.keys.pop(-1)
 

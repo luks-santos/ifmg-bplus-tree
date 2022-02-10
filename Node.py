@@ -39,9 +39,13 @@ class Node:
         print('No direito depois do split: ', node_right.keys)
           
         node_right.parent = self.parent
+
         node_right.next_key = self.next_key
         node_right.previous_key = self
         self.next_key = node_right
+        if (node_right.next_key):
+            node_right.next_key.previous_key = node_right
+
         return node_right
     
         
