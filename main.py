@@ -1,7 +1,8 @@
 from BplusTree import BplusTree
 
-arvore = BplusTree(3)
-while(True):            
+arvore = BplusTree(4)
+while(True):  
+    print("RAIZ: ", arvore.root.keys)          
     print("\n1 - Inserir valor na Árvore")
     print("2 - Remover valor na Árvore")
     print("3 - Buscar valor na Árvore")
@@ -13,7 +14,7 @@ while(True):
         #key = int(input("Digite o valor para ser inserido: "))
         key = int(input("informe uma chave: "))
         
-        arvore.insert(key, [key,1,2,3])
+        arvore.insert(key, [key, 0])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)

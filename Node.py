@@ -29,10 +29,8 @@ class Node:
     def split_node(self, key, record):
         node_right = Node(self.get_order()) 
         node_right.is_leaf = True
-        mid = ceil(self.order/2)
+        mid = int(ceil(self.order/2))
         
-        print('MID:', mid)
-
         self.insert_key_leaf(key, record)
         node_right.keys = self.keys[mid:]
         self.keys = self.keys[:mid]
