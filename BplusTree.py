@@ -158,8 +158,8 @@ class BplusTree:
                         node_merge = node.merge(neighbor_right)
                     
                     del node
-                    
                     parent_node = node_merge.parent
+
                     if (parent_node == self.root and len(self.root.keys) == 1):
                         parent_node = None
                         self.root = node_merge
@@ -182,11 +182,25 @@ class BplusTree:
                             parent_node.children.pop(-1)
                             parent_node.keys.pop(-1)
 
-                       # if (parent_node != self.root and len(parent_node.keys) < int(ceil(parent_node.get_order()/2))):
+                        if (parent_node != self.root and len(parent_node.keys) < int(ceil(parent_node.get_order()/2))):
+                            print("cheguei aqui?")
+                            self.modify_parent(parent_node)
+    
+    def modify_parent(self,node): #Vai ser usado quando precisar reorganizar os pais do nó quando ficar abaixo da ordem mínima
+        parent_node = node.parent
+        index = parent_node.children.index(node)
 
-    
-    #def merge_parent(self, )
-    
+        """ print("cheguei aqui no merge parent")
+        print("chave que sobrou no parent: ", node.keys)
+        print("chave no pai do parent: ", node.parent.keys)
+        print("chaves no irmão do parent: ", node.parent.children[index-1].keys)
+        node.parent.children[index-1].keys += node.parent.keys + node.keys
+        print("chaves no irmão do parent: ", node.parent.children[index-1].keys) """
+
+        if(index > 0):
+            neighbor_left = parent_node.children[index-1]        
+            if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
+                print("fazer aqui")
     def print_tree(self):
         if not self.root:
             return None
