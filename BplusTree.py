@@ -8,7 +8,6 @@ class BplusTree:
     
     def insert(self, key, record):
         node = self.__search(key)
-        print('node no search', node.keys)
         if (node):
             if (len(node.keys) == (node.get_order())):
                 node_right = node.split_node(key, record)
@@ -91,47 +90,31 @@ class BplusTree:
                     print("Subi uma chave para raiz ficou com", len(parent_left.keys), "chaves")
                     break
     
-    def lend(self, node_lend, node, side):
-        if(side == 0):
-            record = node_lend.keys[len(node_lend.keys) - 1]
-            node_lend.keys.pop()
-            node.insert_key_leaf(record[0], record)  
-        elif(side == 1):
-            record = node_lend.keys[0]
-            node_lend.keys.pop(0)
-            node.insert_key_leaf(record[0], record)  
-
-    def merge(self, node_merge, node):
-        node_merge.keys += node.keys
-        node_aux = node.next_key
-        node_merge.next_key = node_aux
-        if(node_aux):
-            node_aux.previous_key = node_merge
-        #del node
-        return node_merge
-        
-
     #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
     def delete(self, key):
         node = self.__search(key)
         print("1 - node no delete : " , node.keys)
-        #Caso 0 - Só tem chaves na raiz, ainda não houve divisão
-        if (node == self.root):
-            self.delete_key(node, key)
+        #caso 0 - Só tem chaves na raiz, ainda não houve divisão
+        if(node == self.root):
+            node.delete_key(key)
             print("é raiz")
-            return
-       
-        #Caso 1.a - Tem quantidade mínima para remoção 
-        print('2 - TAMANHO node:', ceil(node.get_order()/2))
-        if (len(node.keys) > ceil(node.get_order()/2)):
-            self.delete_key(node, key)
 
-        #Caso 1.b - Não tem quantidade mínima para remoção
-        elif (len(node.keys) == ceil(node.get_order()/2)):
+        #caso 1 - Tem quantidade mínima para remoção 
+        elif(len(node.keys) > ceil(node.get_order()/2)):
+            node.delete_key(key)
+
+        else:
+            self.delete_aux(node, key)
+
+
+    def delete_aux(self, node, key):
+        #caso 2 - Não tem quantidade mínima para remoção
+        if (len(node.keys) == ceil(node.get_order()/2)):
+            #caso 2.a
             neighbor_left = node.previous_key
             if (neighbor_left and neighbor_left.parent == node.parent and len(neighbor_left.keys) > ceil(node.get_order()/2)):
-                self.lend(neighbor_left, node, 0)
-                self.delete_key(node, key)
+                neighbor_left.lend(node, 0)
+                node.delete_key(key)
                 for i in range(len(node.parent.keys)):
                     print( "i: ", node.parent.keys)
                     if(node.keys[0][0] <= node.parent.keys[i]):
@@ -142,11 +125,12 @@ class BplusTree:
                 print('3- irmão esquerda:', neighbor_left.keys)
                 return
             else:
+                #caso 2.b
                 neighbor_right = node.next_key
                 if (neighbor_right and neighbor_right.parent == node.parent and len(neighbor_right.keys) > ceil(node.get_order()/2)):
-                    self.lend(neighbor_right, node, 1)
-                    self.delete_key(node, key)
-                    for i in range(len(node.parent.keys)-1,-1,-1):
+                    neighbor_right.lend(node, 1)
+                    node.delete_key(key)
+                    for i in range(len(node.parent.keys)-1, -1, -1):
                         print( "i: ", node.parent.keys)
                         print( "if: ", node.keys[0][0], " - ", node.parent.keys[i])
                         if (neighbor_right.keys[0][0] >= node.parent.keys[i]):
@@ -155,36 +139,34 @@ class BplusTree:
                     print("mudanças: " , node.parent.keys)
                     print('3 - node:', node.keys)
                     print('3- irmão direita:', neighbor_right.keys)
-                
                 else: 
+                    #caso 3
                     node_merge = None
                     index = -1
                     if (neighbor_left and neighbor_left.parent == node.parent):
                         print('4 - FUSÃOOOOOOOO')
                         print("4 - chegou no irmão esquerda!")
-                        print("4 - neighborLeft: ", neighbor_left.keys)
-                        self.delete_key(node, key)
+                        node.delete_key(key)
                         index = node.parent.children.index(node)
-                        print("4 - index: ", index)
-                        node_merge = self.merge(neighbor_left, node)
+                        node_merge = neighbor_left.merge(node)
 
                     elif (neighbor_right and neighbor_right.parent == node.parent):
                         print('4 - FUSÃOOOOOOOO')
                         print("chegou no irmão na direita!")
-                        self.delete_key(node, key)
+                        node.delete_key(key)
                         index = node.parent.children.index(node)
-                        node_merge = self.merge(node, neighbor_right)
+                        node_merge = node.merge(neighbor_right)
                     
                     del node
+                    
                     parent_node = node_merge.parent
                     if (parent_node == self.root and len(self.root.keys) == 1):
                         parent_node = None
                         self.root = node_merge
-                        #del node_merge
+                        del node_merge
                         return
                 
                     elif (len(parent_node.keys) > 1):
-                        
                         if (index > 0 and index < len(parent_node.keys)):
                             print('ENTREI NO CASO 1 DA FUSÃO')
                             parent_node.children.pop(index)
@@ -200,17 +182,11 @@ class BplusTree:
                             parent_node.children.pop(-1)
                             parent_node.keys.pop(-1)
 
-    #teste              
-    def delete_key(self, node, key):
-        if len(node.keys):
-            print(node.keys)
-            for i,item in enumerate(node.keys):
-                if item[0] == key:
-                    node.keys.pop(i)
-                    break
-            
-            print(node.keys)
+                       # if (parent_node != self.root and len(parent_node.keys) < int(ceil(parent_node.get_order()/2))):
 
+    
+    #def merge_parent(self, )
+    
     def print_tree(self):
         if not self.root:
             return None
