@@ -215,6 +215,8 @@ class BplusTree:
             
             for c in node.children:
                 c.parent = neighbor_left
+            
+            node = neighbor_left
         
         elif(neighbor_right):
             print('Fusão direita em nó não folha')
@@ -229,12 +231,12 @@ class BplusTree:
 
         if len(parent_node.keys) == 0 and parent_node == self.root:
             print("TO AQQQQQQQQQQ DKDLJFKADMFD")
-            self.root = neighbor_left
+            self.root = node
         
         elif len(parent_node) < ceil(parent_node.get_order()/2) and parent_node != self.root:
             self.modify_parent(parent_node) 
         
-        
+
     def print_tree(self):
         if not self.root:
             return None
