@@ -12,11 +12,11 @@ while(True):
     n = int(input("Digite uma opção: "))
     if n == 1:
         #key = int(input("Digite o valor para ser inserido: "))
-        key = int(input("informe uma chave: "))
-       # vv = [7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 6, 5, 4]
+       # key = int(input("informe uma chave: "))
+        vv = [7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 6, 5, 4]
        #remove 14
-       #for i in vv:
-        arvore.insert(key, [key, 0])
+        for i in vv:
+            arvore.insert(i, [i, 0])
     elif n == 2:
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)

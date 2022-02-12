@@ -91,6 +91,7 @@ class Node:
             self.insert_key(key)
             node_ = neighbor_left.children.pop(-1)
             node_.parent = neighbor_right
+            
             neighbor_right.children = node_.children  + neighbor_right.children
             
             print('filhos do nó direito')
