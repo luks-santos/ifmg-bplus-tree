@@ -14,7 +14,7 @@ while(True):
         #key = int(input("Digite o valor para ser inserido: "))
        # key = int(input("informe uma chave: "))
         #vv = [7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 30, 40, 50, 51, 52, 53, 54,20,21,22]
-        vv = [7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,21,22,23,24,25,26,6,5,4]
+        vv = [7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
        #remove 14
         for i in vv:
             arvore.insert(i, [i, 0])

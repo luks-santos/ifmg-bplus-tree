@@ -1,6 +1,7 @@
 from Node import Node
 from math import ceil
 
+#depois conferir ordem para impar com o floor
 class BplusTree:
     def __init__(self, order) -> None:
         self.root = Node(order)
@@ -186,58 +187,54 @@ class BplusTree:
     
     def modify_parent(self, node): #Vai ser usado quando precisar reorganizar os pais do nó quando ficar abaixo da ordem mínima
      
-        """ print("cheguei aqui no merge parent")
-        print("chave que sobrou no parent: ", node.keys)
-        print("chave no pai do parent: ", node.parent.keys)
-        print("chaves no irmão do parent: ", node.parent.children[index-1].keys)
-        node.parent.children[index-1].keys += node.parent.keys + node.keys
-        print("chaves no irmão do parent: ", node.parent.children[index-1].keys) """
-
         parent_node = node.parent
-        neighbor_left = None
-        neighbor_right = None
-
+        neighbor_left = neighbor_right = None    
         index = parent_node.children.index(node)
 
-        if(index!=0 or len(node.parent.keys)==index):
+        if(index != 0 or len(node.parent.keys) == index):
             neighbor_left = node.parent.children[index - 1]
             if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
                 print("cheguei na rotação pela esquerda")
                 print("chaves do no: ", node.parent.children[index].keys)
+                #conferir isso
                 node.parent.rotate_keys(neighbor_left, node, index - 1, 0)
+                return
                 
-        elif(index==0 or index<len(node.parent.keys)): 
-            neighbor_right = node.parent.children[index+1]
+        elif(index == 0 or index < len(node.parent.keys)): 
+            neighbor_right = node.parent.children[index + 1]
             if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
-                node.parent.rotate_keys(node, neighbor_right, index+1, 1)
+                node.parent.rotate_keys(node, neighbor_right, index + 1, 1)
                 return
-
-        """ if(index > 0 and index < len(parent_node.keys)):
-            neighbor_left = parent_node.children[index - 1]
-            if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
-                print("cheguei na rotação pela esquerda")
-                print("chaves do no: ", parent_node.children[index].keys)
-                parent_node.rotate_keys(neighbor_left, node, index - 1, 0)
-                return
+        
+        if(neighbor_left):
+            print('Fusão esquerda em nó não folha')
+            key = parent_node.keys.pop(index - 1)
+            neighbor_left.insert_key(key)
+            neighbor_left.keys += node.keys
+            neighbor_left.children += node.children
             
-            neighbor_right = parent_node.children[index+1]
-            if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
-                parent_node.rotate_keys(node, neighbor_right, index+1, 1)
-                return
-        elif(index == 0):
-            neighbor_right = parent_node.children[index+1]
-            if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
-                print("parent_node: ", parent_node.keys)
-                parent_node.rotate_keys(node, neighbor_right, index+1, 1)
-                return
-        elif(index == len(parent_node.keys)):
-            neighbor_left = parent_node.children[index - 1]
-            if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
-                print("cheguei na rotação pela esquerda no ultimo caso")
-                print("chaves do no: ", parent_node.children[index].keys)
-                parent_node.rotate_keys(neighbor_left, node, index - 1, 0)
-                return """
- 
+            for c in node.children:
+                c.parent = neighbor_left
+        
+        elif(neighbor_right):
+            print('Fusão direita em nó não folha')
+            #pode ter erro aqui
+            key = parent_node.keys.pop(index)
+            node.insert_key(key)
+            node.keys += neighbor_right.keys
+            node.children += neighbor_right.children
+            
+            for c in neighbor_right.children:
+                c.parent = node
+
+        if len(parent_node.keys) == 0 and parent_node == self.root:
+            print("TO AQQQQQQQQQQ DKDLJFKADMFD")
+            self.root = neighbor_left
+        
+        elif len(parent_node) < ceil(parent_node.get_order()/2) and parent_node != self.root:
+            self.modify_parent(parent_node) 
+        
+        
     def print_tree(self):
         if not self.root:
             return None
