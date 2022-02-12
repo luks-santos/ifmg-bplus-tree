@@ -86,13 +86,15 @@ class Node:
     def rotate_keys(self, neighbor_left, neighbor_right, index, side):
         if(side == 0):
             key = self.keys.pop(index)
+            print("no do contexto self: ", self.keys, " - i - ", index)
             neighbor_right.insert_key(key)
             key = neighbor_left.keys.pop(-1)
             self.insert_key(key)
             node_ = neighbor_left.children.pop(-1)
+            print("node_: ", node_.keys)
             node_.parent = neighbor_right
             
-            neighbor_right.children = node_.children  + neighbor_right.children
+            neighbor_right.children = [node_] + neighbor_right.children
             
             print('filhos do nó direito')
             for c in neighbor_right.children:
@@ -101,16 +103,17 @@ class Node:
                 print(c.parent.keys)
             
         elif(side == 1):
-            key = self.keys.pop(index)
+            key = self.keys.pop(index-1)
+            print("no do contexto self: ", self.keys, " - i - ", index)
             neighbor_left.insert_key(key)
             key = neighbor_right.keys.pop(0)
             self.insert_key(key)
-            node_ = neighbor_left.children.pop(-1)
-            node_.parent = neighbor_right
-            neighbor_right.children = node_.children  + neighbor_right.children
+            node_ = neighbor_right.children.pop(0)
+            node_.parent = neighbor_left
+            neighbor_left.children += [node_]
             
-            print('filhos do nó direito')
-            for c in neighbor_right.children:
+            print('filhos do nó esquerdo')
+            for c in neighbor_left.children:
                 print(c.keys)
                 print('------')
                 print(c.parent.keys)

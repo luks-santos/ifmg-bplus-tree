@@ -195,18 +195,49 @@ class BplusTree:
 
         parent_node = node.parent
         neighbor_left = None
+        neighbor_right = None
+
         index = parent_node.children.index(node)
-        if(index > 0 and index < len(parent_node.keys)):
+
+        if(index!=0 or len(node.parent.keys)==index):
+            neighbor_left = node.parent.children[index - 1]
+            if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
+                print("cheguei na rotação pela esquerda")
+                print("chaves do no: ", node.parent.children[index].keys)
+                node.parent.rotate_keys(neighbor_left, node, index - 1, 0)
+                
+        elif(index==0 or index<len(node.parent.keys)): 
+            neighbor_right = node.parent.children[index+1]
+            if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
+                node.parent.rotate_keys(node, neighbor_right, index+1, 1)
+                return
+
+        """ if(index > 0 and index < len(parent_node.keys)):
             neighbor_left = parent_node.children[index - 1]
             if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
+                print("cheguei na rotação pela esquerda")
+                print("chaves do no: ", parent_node.children[index].keys)
                 parent_node.rotate_keys(neighbor_left, node, index - 1, 0)
                 return
             
-            neighbor_right = parent_node.children[index + 1]
+            neighbor_right = parent_node.children[index+1]
             if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
-                parent_node.rotate_keys(node, neighbor_right, index + 1, 1)
+                parent_node.rotate_keys(node, neighbor_right, index+1, 1)
                 return
-
+        elif(index == 0):
+            neighbor_right = parent_node.children[index+1]
+            if(len(neighbor_right.keys) > ceil(neighbor_right.get_order()/2)):
+                print("parent_node: ", parent_node.keys)
+                parent_node.rotate_keys(node, neighbor_right, index+1, 1)
+                return
+        elif(index == len(parent_node.keys)):
+            neighbor_left = parent_node.children[index - 1]
+            if(len(neighbor_left.keys) > ceil(neighbor_left.get_order()/2)):
+                print("cheguei na rotação pela esquerda no ultimo caso")
+                print("chaves do no: ", parent_node.children[index].keys)
+                parent_node.rotate_keys(neighbor_left, node, index - 1, 0)
+                return """
+ 
     def print_tree(self):
         if not self.root:
             return None
