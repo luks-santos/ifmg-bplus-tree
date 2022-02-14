@@ -2,6 +2,7 @@ from Node import Node
 from math import ceil
 
 #depois conferir ordem para impar com o floor
+#tratar caso chave repetida
 class BplusTree:
     def __init__(self, order) -> None:
         self.root = Node(order)
@@ -233,7 +234,7 @@ class BplusTree:
             print("TO AQQQQQQQQQQ DKDLJFKADMFD")
             self.root = node
         
-        elif len(parent_node) < ceil(parent_node.get_order()/2) and parent_node != self.root:
+        elif len(parent_node.keys) < ceil(parent_node.get_order()/2) and parent_node != self.root:
             self.modify_parent(parent_node) 
         
 
