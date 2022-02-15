@@ -1,5 +1,6 @@
 from math import ceil
 
+
 class Node:
     def __init__(self, order) -> None:
         self.order = order
@@ -47,7 +48,7 @@ class Node:
     def split_node(self, key, record):
         node_right = Node(self.get_order()) 
         node_right.is_leaf = True
-        mid = int(ceil(self.order/2))
+        mid = ceil((self.order/2))
         
         self.insert_key_leaf(key, record)
         node_right.keys = self.keys[mid:]

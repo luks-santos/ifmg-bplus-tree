@@ -1,6 +1,9 @@
 from BplusTree import BplusTree
 
-arvore = BplusTree(4)
+lenPag = int(input("Digite o tamanho da página: "))
+qtdReg = int(input("Digite a quantidade de campos: "))
+arvore = BplusTree(lenPag,qtdReg)
+
 while(True):  
     print("RAIZ: ", arvore.root.keys)          
     print("\n1 - Inserir valor na Árvore")
