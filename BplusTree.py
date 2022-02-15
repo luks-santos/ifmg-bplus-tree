@@ -12,11 +12,13 @@ class BplusTree:
     
 
     def calc_order(self,lenPage, numReg): 
+        return lenPage, numReg
         vet = [1]*numReg
         print("vetor: " , vet)
         registro = sys.getsizeof(vet) # Para um registro de 5 campos cada um terá 120 bytes
         orderLeaf = (lenPage//registro)
-        print("order: ", orderLeaf)
+        print("order_folha: ", orderLeaf)
+        print("order_not_folha: ", lenPage//sys.getsizeof(1))
         return (orderLeaf, lenPage//sys.getsizeof(1))
 
     def insert(self, key, record):
@@ -172,6 +174,7 @@ class BplusTree:
                     
                     del node
                     parent_node = node_merge.parent
+
                     if (parent_node == self.root and len(self.root.keys) == 1):
                         parent_node = None
                         self.root = node_merge
@@ -220,6 +223,8 @@ class BplusTree:
         
         if(neighbor_left):
             print('Fusão esquerda em nó não folha')
+            print('index ', index)
+            print('PARENT NODE', parent_node.keys)
             key = parent_node.keys.pop(index - 1)
             neighbor_left.insert_key(key)
             neighbor_left.keys += node.keys
@@ -228,11 +233,17 @@ class BplusTree:
             for c in node.children:
                 c.parent = neighbor_left
             
+            parent_node.children.pop(index)
+
             node = neighbor_left
         
         elif(neighbor_right):
             print('Fusão direita em nó não folha')
             #pode ter erro aqui
+            print('Fusão esquerda em nó não folha')
+            print('index ', index)
+            print('PARENT NODE', parent_node.keys)
+            print('NODE: ', node.keys)
             key = parent_node.keys.pop(index)
             node.insert_key(key)
             node.keys += neighbor_right.keys
@@ -240,6 +251,8 @@ class BplusTree:
             
             for c in neighbor_right.children:
                 c.parent = node
+            #conferir aqui
+            parent_node.children.pop(index + 1)
 
         if len(parent_node.keys) == 0 and parent_node == self.root:
             print("TO AQQQQQQQQQQ DKDLJFKADMFD")
@@ -247,9 +260,8 @@ class BplusTree:
         
         elif len(parent_node.keys) < floor(parent_node.get_order()/2) and parent_node != self.root:
             self.modify_parent(parent_node) 
-        
-
-    def print_tree(self):
+    
+    def print_node_leaf(self):
         if not self.root:
             return None
         
@@ -260,3 +272,30 @@ class BplusTree:
         while node:
             print('{}'.format(node.keys), end=' -> ')
             node = node.next_key
+
+
+    def print_tree(self):
+        if (not len(self.root.keys)): 
+            return
+
+        delimiter = None
+        queue = []
+
+        queue.append(self.root)
+        queue.append(delimiter)
+        
+        while (True):
+            curr = queue.pop(0)
+            if (curr != delimiter):
+                if (curr.is_leaf):
+                    print(curr.keys, end=' -> ')
+                else:
+                    print(curr.keys, end='    ')
+                if (len(curr.children)):
+                    for n in curr.children:
+                        queue.append(n)
+            else:
+                print()
+                if (not len(queue)):
+                    break
+                queue.append(delimiter) 
