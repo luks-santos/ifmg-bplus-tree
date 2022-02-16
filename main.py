@@ -26,9 +26,10 @@ while(True):
         numero = int(input("Digite o valor para ser removido: "))
         arvore.delete(numero)
     elif n == 3:
-        #numero = int(input("Digite o valor para ser buscado: "))
-        key = int(input("Digite o valor para ser inserido: "))
-        arvore.insert(key, [key, 0])
+        key = int(input("Digite o valor para ser buscado: "))
+        arvore.search_key(key)
+        #key = int(input("Digite o valor para ser inserido: "))
+        #arvore.insert(key, [key, 0])
     elif  n== 4:
         numero1 = int (input("Digite o primeiro valor para ser buscado: "))
         numero2 = int (input("Digite o segundo valor para ser buscado: "))

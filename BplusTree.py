@@ -47,6 +47,17 @@ class BplusTree:
                     break
         return node_
 
+    def search_key(self,key):
+        node_ = self.__search(key)
+        temp = node_.keys
+        for i in range(len(temp)):     
+            if (key == temp[i][0]):
+                print("Chave buscada: ", key)
+                print("Nó da chave: ", node_.keys)
+                return
+        print("Chave não encontrada")
+
+
     def __insert_parent(self, node_left, key, node_right):
         if (self.root == node_left):
             node_root = Node(self.orderParent)
