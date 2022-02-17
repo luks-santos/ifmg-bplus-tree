@@ -5,15 +5,15 @@ import sys
 #depois conferir ordem para impar com o floor
 #tratar caso chave repetida
 class BplusTree:
-    def __init__(self, lenPag, qtdReg ) -> None:
-        self.orderNode, self.orderParent  = self.calc_order(lenPag, qtdReg)
+    def __init__(self, lenPag, qtdReg ) -> None: #Construtor da arvore B+
+        self.orderNode, self.orderParent  = self.calc_order(lenPag, qtdReg) #Recebem os valores da ordem
         self.root = Node(self.orderNode)
         self.root.is_leaf = True
     
 
-    def calc_order(self,lenPage, numReg): 
+    def calc_order(self,lenPage, numReg): #Calcula a ordem baseada no tamanho da página e quantidade de campos
         return lenPage, numReg
-        vet = [1]*numReg
+        vet = [1]*numReg #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
         print("vetor: " , vet)
         registro = sys.getsizeof(vet) # Para um registro de 5 campos cada um terá 120 bytes
         orderLeaf = (lenPage//registro)
@@ -21,36 +21,36 @@ class BplusTree:
         print("order_not_folha: ", lenPage//sys.getsizeof(1))
         return (orderLeaf, lenPage//sys.getsizeof(1))
 
-    def insert(self, key, record):
-        node = self.__search(key)
+    def insert(self, key, record): #Método para inserção dos registros
+        node = self.__search(key) #Busco o nó o qual o registro será inserido
         if (node):
-            if (len(node.keys) == (node.get_order())):
-                node_right = node.split_node(key, record)
+            if (len(node.keys) == (node.get_order())): #Caso o nó esteja cheio 
+                node_right = node.split_node(key, record) #Será realizado a divisão 
                 if (node_right):
-                    self.__insert_parent(node, node_right.keys[0][0], node_right)
+                    self.__insert_parent(node, node_right.keys[0][0], node_right) #Após isso será inserido a chave no nó pai e realizado os apontamentos
             else:
-                node.insert_key_leaf(key, record)
+                node.insert_key_leaf(key, record) #Insere o registro na folha
 
-    def __search(self, key):
-        node_ = self.root
-        while(not node_.is_leaf):
+    def __search(self, key): #Pesquisa em qual nó será inserido o registro 
+        node_ = self.root #Inicia a busca pela raiz
+        while(not node_.is_leaf): #Enquanto não encontrar um nó folha o laço permanece
             temp = node_.keys
             for i in range(len(temp)):     
-                if (key == temp[i]):
+                if (key == temp[i]): #Caso o indice de chave exista retorna o nó da posição i+1
                     node_ = node_.children[i + 1]
                     break
-                elif (key < temp[i]):
+                elif (key < temp[i]): #Caso o indice de chave seja menor do que a existente retorna o nó da posição i
                     node_ = node_.children[i]
                     break
-                elif (i + 1 == len(node_.keys)):
+                elif (i + 1 == len(node_.keys)): #Caso chegue ao final é retornado o nó da posição i+1
                     node_ = node_.children[i + 1]
                     break
         return node_
 
-    def search_key(self,key):
-        node_ = self.__search(key)
+    def search_key(self,key): #Pesquisa por igualdade
+        node_ = self.__search(key) #Encontro o possível nó que está o registro
         temp = node_.keys
-        for i in range(len(temp)):     
+        for i in range(len(temp)):     #Percorro e verifico se o registro está presente no nó
             if (key == temp[i][0]):
                 print("Chave buscada: ", key)
                 print("Nó da chave: ", node_.keys)
@@ -58,8 +58,8 @@ class BplusTree:
         print("Chave não encontrada")
 
 
-    def __insert_parent(self, node_left, key, node_right):
-        if (self.root == node_left):
+    def __insert_parent(self, node_left, key, node_right): #Utilizada na divisão ao inserir 
+        if (self.root == node_left): #Caso seja realizada a divisão no no raiz
             node_root = Node(self.orderParent)
             node_root.keys = [key]
             node_root.children = [node_left, node_right]
@@ -70,17 +70,17 @@ class BplusTree:
             node_left.parent = node_root
             node_right.parent = node_root
         else:
-            parent_left = node_left.parent
-            temp = parent_left.children
+            parent_left = node_left.parent #Recebe o pai do nó da esquerda
+            temp = parent_left.children #Recebe os filos do nó da esquerda
             for i in range(len(temp)):
-                if (temp[i] == node_left and len(parent_left.keys) == (self.root.order)):
-                    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-                    parent_right = Node(self.orderParent)
+                if (temp[i] == node_left and len(parent_left.keys) == (parent_left.get_order())): #Caso o filho do nó analisado seja igual ao node
+                    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")      #E a quantidade de chaves igual à ordem daquele no
+                    parent_right = Node(self.orderParent) #Crio um nó auxiliar
                     parent_right.parent = parent_left.parent
-                    mid = ceil(parent_left.order/2)
-                    
+                    mid = ceil(parent_left.get_order()/2) #Defino um pivo
+                    #Insiro a key entre as keys que estão no nó pai
                     parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
-                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
+                    parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:] #Reorganizo os filhos
                     print('KEYS P ESQUERDA:', parent_left.keys)
                     print('FILHOS ESQUERDA: ')
                     for k in parent_left.children:
@@ -110,7 +110,7 @@ class BplusTree:
                     self.__insert_parent(parent_left, value, parent_right)
                     print("++++++++++++++++++++++++++++++++++++++++++++++++")
                     break
-                elif (temp[i] == node_left):
+                elif (temp[i] == node_left): #Se a raiz não estiver cheia apenas subo uma chave para ela.
                     parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
                     parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
                     print("Subi uma chave para raiz ficou com", len(parent_left.keys), "chaves")

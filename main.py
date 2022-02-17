@@ -4,7 +4,7 @@ lenPag = int(input("Digite o tamanho da página: "))
 qtdReg = int(input("Digite a quantidade de campos: "))
 arvore = BplusTree(lenPag,qtdReg)
 
-while(True):  
+while(True):  #Menu de ações da Arvore B+
   #  print("RAIZ: ", arvore.root.keys)          
     print("\n1 - Inserir valor na Árvore")
     print("2 - Remover valor na Árvore")
