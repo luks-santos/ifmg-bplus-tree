@@ -49,7 +49,10 @@ class BplusTree:
             if (key == k[0]):
                 return False
         return True
-
+    
+    #def interval_search(self, node, key, op):
+        
+           
     def __insert_parent(self, node_left, key, node_right): #Utilizada na divisão ao inserir 
         if (self.root == node_left): #Caso seja realizada a divisão no no raiz
             node_root = Node(self.order_parent) # Como a raiz não será folha recebe ordem de no não folha
@@ -196,7 +199,6 @@ class BplusTree:
                 c.parent = neighbor_left
             
             parent_node.children.pop(index)
-
             node = neighbor_left
         
         elif(neighbor_right):
@@ -216,19 +218,7 @@ class BplusTree:
         elif len(parent_node.records) < floor(parent_node.get_order()/2) and parent_node != self.root:
             self.modify_parent(parent_node) 
     
-    def print_node_leaf(self):
-        if not self.root:
-            return None
-        
-        node = self.root
-        while not node.is_leaf:
-            node = node.children[0]
-
-        while node:
-            print('{}'.format(node.records), end=' -> ')
-            node = node.next_key
-
-
+    
     def print_tree(self):
         if (not len(self.root.records)): 
             return
@@ -238,12 +228,11 @@ class BplusTree:
 
         queue.append(self.root)
         queue.append(delimiter)
-        
         while (True):
             curr = queue.pop(0)
             if (curr != delimiter):
                 if (curr.is_leaf):
-                    print(curr.records, end=' -> ')
+                    print(curr.records, end=' <-> ')
                 else:
                     print(curr.records, end='    ')
                 if (len(curr.children)):
