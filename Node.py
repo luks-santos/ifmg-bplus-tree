@@ -5,8 +5,8 @@ class Node:
         self.order = order
         self.is_leaf = False
         self.parent = None
-        self.next_key = None
-        self.previous_key = None
+        self.next_record = None
+        self.previous_record = None
         self.records = []
         self.children = []
 
@@ -55,12 +55,12 @@ class Node:
         self.records = self.records[:mid]
   
         node_right.parent = self.parent  #É definido como o pai do nó criado o pai do nó no contexto, ou seja aquele que foi dividido
-        node_right.next_key = self.next_key #É realizado o reapontamento
-        node_right.previous_key = self 
-        self.next_key = node_right
+        node_right.next_record = self.next_record #É realizado o reapontamento
+        node_right.previous_record = self 
+        self.next_record = node_right
         #Caso seja o primeiro nó pode não haver vizinho à esquerda, dessa forma é necessário verificação
-        if (node_right.next_key):
-            node_right.next_key.previous_key = node_right
+        if (node_right.next_record):
+            node_right.next_record.previous_record = node_right
         return node_right
     
     def lend(self, node, side): #Responsável por pegar o nó emprestado
@@ -75,10 +75,10 @@ class Node:
 
     def merge(self, node): #Realiza a fusão dos nós
         self.records += node.records #O nó que chama a fusão recebe as chaves do outro nó
-        node_aux = node.next_key
-        self.next_key = node_aux
+        node_aux = node.next_record
+        self.next_record = node_aux
         if(node_aux): #Caso seja um nó na ultima posição pode não haver nós posteriores
-            node_aux.previous_key = self
+            node_aux.previous_record = self
         del node
         return self
         

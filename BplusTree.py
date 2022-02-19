@@ -50,7 +50,23 @@ class BplusTree:
                 return False
         return True
     
-    #def interval_search(self, node, key, op):
+    def interval_search(self, node, key, key2, op):
+        print("cheguei no intervalo")
+        if(op == '>'):
+            while(node):
+                for i in range(len(node.records)):
+                    if(node.records[i][0]>key):
+                        print(node.records[i:], end="<->")
+                        break
+                node = node.next_record
+        elif(op == '<'):
+            while(node):
+                for i in range(len(node.records)-1, -1,-1):
+                    if(node.records[i][0]<key):
+                        print(node.records[:i+1], end="<->")
+                        break
+                node = node.previous_record
+            
         
            
     def __insert_parent(self, node_left, key, node_right): #Utilizada na divisão ao inserir 
@@ -114,7 +130,7 @@ class BplusTree:
         #caso 2 - Não tem quantidade mínima para remoção
         if (len(node.records) == floor(node.get_order()/2)):
             #caso 2.a Irmão imediato esquerda pode emprestar um registro
-            neighbor_left = node.previous_key
+            neighbor_left = node.previous_record
             if (neighbor_left and neighbor_left.parent == node.parent and len(neighbor_left.records) > floor(node.get_order()/2)):
                 neighbor_left.lend(node, 0) 
                 node.delete_key(key)
@@ -124,7 +140,7 @@ class BplusTree:
                         break
             else:
                 #caso 2.b Irmão imediato direita pode emprestar um registro
-                neighbor_right = node.next_key
+                neighbor_right = node.next_record
                 if (neighbor_right and neighbor_right.parent == node.parent and len(neighbor_right.records) > floor(node.get_order()/2)):
                     neighbor_right.lend(node, 1)
                     node.delete_key(key)
