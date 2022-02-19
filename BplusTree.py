@@ -1,40 +1,37 @@
 from Node import Node
-from math import floor,ceil
+from math import floor, ceil
 import sys
 
-#depois conferir ordem para impar com o floor
-#tratar caso chave repetida
 class BplusTree:
-    def __init__(self, lenPag, qtdReg ) -> None: #Construtor da arvore B+
-        self.orderNode, self.orderParent  = self.calc_order(lenPag, qtdReg) #Recebem os valores da ordem
-        self.root = Node(self.orderNode)
+    def __init__(self, len_page, qty_fields ) -> None: #Construtor da arvore B+
+        self.order, self.order_parent  = self.calc_order(len_page, qty_fields) #Recebem os valores da ordem
+        self.root = Node(self.order)
         self.root.is_leaf = True
     
-
-    def calc_order(self,lenPage, numReg): #Calcula a ordem baseada no tamanho da página e quantidade de campos
-        return lenPage, numReg
-        vet = [1]*numReg #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
-        print("vetor: " , vet)
-        registro = sys.getsizeof(vet) # Para um registro de 5 campos cada um terá 120 bytes
-        orderLeaf = (lenPage//registro)
-        print("order_folha: ", orderLeaf)
-        print("order_not_folha: ", lenPage//sys.getsizeof(1))
-        return (orderLeaf, lenPage//sys.getsizeof(1))
+    def calc_order(self, len_page, qty_fields): #Calcula a ordem baseada no tamanho da página e quantidade de campos
+        vet_ = [1] * qty_fields #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
+        order_leaf = len_page//sys.getsizeof(vet_) #tamanho da página em bytes pelo tamanho do registro em bytes
+        order_nleaf = len_page//sys.getsizeof(1)
+        print("order_folha: ", order_leaf)
+        print("order_not_folha: ", order_nleaf)
+        return (order_leaf, order_nleaf)
 
     def insert(self, key, record): #Método para inserção dos registros
-        node = self.__search(key) #Busco o nó o qual o registro será inserido
-        if (node):
-            if (len(node.keys) == (node.get_order())): #Caso o nó esteja cheio 
+        node = self.search(key) #Busco o nó o qual o registro será inserido
+        if (self.search_key(node, key)):
+            if (len(node.records) == (node.get_order())): #Caso o nó esteja cheio 
                 node_right = node.split_node(key, record) #Será realizado a divisão 
                 if (node_right):
-                    self.__insert_parent(node, node_right.keys[0][0], node_right) #Após isso será inserido a chave no nó pai e realizado os apontamentos
+                    self.__insert_parent(node, node_right.records[0][0], node_right) #Após isso será inserido a chave no nó pai e realizado os apontamentos
             else:
                 node.insert_key_leaf(key, record) #Insere o registro na folha
+        else:
+            print('Chave já inserida.')
 
-    def __search(self, key): #Pesquisa em qual nó será inserido o registro 
+    def search(self, key): #Pesquisa em qual nó será inserido o registro 
         node_ = self.root #Inicia a busca pela raiz
         while(not node_.is_leaf): #Enquanto não encontrar um nó folha o laço permanece
-            temp = node_.keys
+            temp = node_.records
             for i in range(len(temp)):     
                 if (key == temp[i]): #Caso o indice de chave exista retorna o nó da posição i+1
                     node_ = node_.children[i + 1]
@@ -42,203 +39,157 @@ class BplusTree:
                 elif (key < temp[i]): #Caso o indice de chave seja menor do que a existente retorna o nó da posição i
                     node_ = node_.children[i]
                     break
-                elif (i + 1 == len(node_.keys)): #Caso chegue ao final é retornado o nó da posição i+1
+                elif (i + 1 == len(node_.records)): #Caso chegue ao final é retornado o nó da posição i+1
                     node_ = node_.children[i + 1]
                     break
         return node_
 
-    def search_key(self,key): #Pesquisa por igualdade
-        node_ = self.__search(key) #Encontro o possível nó que está o registro
-        temp = node_.keys
-        for i in range(len(temp)):     #Percorro e verifico se o registro está presente no nó
-            if (key == temp[i][0]):
-                print("Chave buscada: ", key)
-                print("Nó da chave: ", node_.keys)
-                return
-        print("Chave não encontrada")
-
+    def search_key(self, node_, key): #Pesquisa por igualdade
+        for k in node_.records:     #Percorro e verifico se o registro está presente no nó
+            if (key == k[0]):
+                return False
+        return True
 
     def __insert_parent(self, node_left, key, node_right): #Utilizada na divisão ao inserir 
         if (self.root == node_left): #Caso seja realizada a divisão no no raiz
-            node_root = Node(self.orderParent)
-            node_root.keys = [key]
+            node_root = Node(self.order_parent) # Como a raiz não será folha recebe ordem de no não folha
+            node_root.records = [key]
             node_root.children = [node_left, node_right]
-            print('node_root:', node_root.keys)
-            print('Filho esquerda raiz:', node_root.children[0].keys)
-            print('Filho direita raiz:', node_root.children[1].keys)
-            self.root = node_root
-            node_left.parent = node_root
+            self.root = node_root # Atualiza nova raiz
+            node_left.parent = node_root # Atualiza os filhos
             node_right.parent = node_root
         else:
             parent_left = node_left.parent #Recebe o pai do nó da esquerda
-            temp = parent_left.children #Recebe os filos do nó da esquerda
+            temp = parent_left.children #Recebe os filhos do nó da esquerda
             for i in range(len(temp)):
-                if (temp[i] == node_left and len(parent_left.keys) == (parent_left.get_order())): #Caso o filho do nó analisado seja igual ao node
-                    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")      #E a quantidade de chaves igual à ordem daquele no
-                    parent_right = Node(self.orderParent) #Crio um nó auxiliar
+                #Caso o filho do nó analisado seja igual ao node dividido e a quantidade de chaves do pai é igual à ordem daquele nó faz a divisão do pai
+                if (temp[i] == node_left and len(parent_left.records) == (parent_left.get_order())):  
+                    parent_right = Node(self.order_parent) #Crio um nó auxiliar
                     parent_right.parent = parent_left.parent
-                    mid = ceil(parent_left.get_order()/2) #Defino um pivo
-                    #Insiro a key entre as keys que estão no nó pai
-                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
+                    
+                    #Insiro a key entre as records que estão no nó pai
+                    parent_left.records = parent_left.records[:i] + [key] + parent_left.records[i:]
                     parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:] #Reorganizo os filhos
-                    print('KEYS P ESQUERDA:', parent_left.keys)
-                    print('FILHOS ESQUERDA: ')
-                    for k in parent_left.children:
-                        print(k.keys)
+                    
+                    mid = ceil(parent_left.get_order()/2) #Defino um pivo
+                    value = parent_left.records[mid] #Value receberá o valor da chave que se encontra na posição do pivo
 
-                    value = parent_left.keys[mid]
+                    parent_right.records = parent_left.records[mid + 1:] #O pivo será utilizado para reorganizar as chaves do nó da direita
+                    parent_right.children = parent_left.children[mid + 1:] #Bem como seus filhos
+                    
+                    parent_left.records = parent_left.records[:mid]  #O pivo também será utilizado para reorganizar as chaves do nó da esquerda
+                    parent_left.children = parent_left.children[:mid + 1] #Bem como seus filhos
 
-                    parent_right.keys = parent_left.keys[mid + 1:]
-                    parent_right.children = parent_left.children[mid + 1:]
-                    print('KEYS P DIREITA:',  parent_right.keys)
-                    print('FILHOS DIREITA: ')
-                    for k in parent_right.children:
-                        print(k.keys)
-
-                    parent_left.keys = parent_left.keys[:mid] 
-                    parent_left.children = parent_left.children[:mid + 1]
-                    print('KEYS P ESQUERDA:', parent_left.keys)
-                    print('FILHOS ESQUERDA: ')
-                    for k in parent_left.children:
-                        print(k.keys)
-
+                    #Reorganiza os apontaodres dos filhos para os pais
                     for j in parent_left.children:
                         j.parent = parent_left
                     for j in parent_right.children:
                         j.parent = parent_right
 
-                    self.__insert_parent(parent_left, value, parent_right)
-                    print("++++++++++++++++++++++++++++++++++++++++++++++++")
+                    self.__insert_parent(parent_left, value, parent_right) # O valor de value será subido na divisão de páginas 
                     break
+
                 elif (temp[i] == node_left): #Se a raiz não estiver cheia apenas subo uma chave para ela.
-                    parent_left.keys = parent_left.keys[:i] + [key] + parent_left.keys[i:]
+                    parent_left.records = parent_left.records[:i] + [key] + parent_left.records[i:]
                     parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]
-                    print("Subi uma chave para raiz ficou com", len(parent_left.keys), "chaves")
                     break
     
     #Há mudanças nas chaves do pai, páginas não folha, somente quando pego emprestado, ou quando tem fusão 
     def delete(self, key):
-        node = self.__search(key)
-        print("1 - node no delete : " , node.keys)
+        node = self.search(key)
         #caso 0 - Só tem chaves na raiz, ainda não houve divisão
         if(node == self.root):
             node.delete_key(key)
-            print("é raiz")
 
-        #caso 1 - Tem quantidade mínima para remoção 
-        elif(len(node.keys) > floor(node.get_order()/2)):
+        #caso 1 - node é folha e tem quantidade mínima para remoção 
+        elif(len(node.records) > floor(node.get_order()/2)):
             node.delete_key(key)
-
         else:
             self.delete_aux(node, key)
 
-
     def delete_aux(self, node, key):
         #caso 2 - Não tem quantidade mínima para remoção
-        if (len(node.keys) == floor(node.get_order()/2)):
-            #caso 2.a
+        if (len(node.records) == floor(node.get_order()/2)):
+            #caso 2.a Irmão imediato esquerda pode emprestar um registro
             neighbor_left = node.previous_key
-            if (neighbor_left and neighbor_left.parent == node.parent and len(neighbor_left.keys) > floor(node.get_order()/2)):
-                neighbor_left.lend(node, 0)
+            if (neighbor_left and neighbor_left.parent == node.parent and len(neighbor_left.records) > floor(node.get_order()/2)):
+                neighbor_left.lend(node, 0) 
                 node.delete_key(key)
-                for i in range(len(node.parent.keys)):
-                    print( "i: ", node.parent.keys)
-                    if(node.keys[0][0] <= node.parent.keys[i]):
-                        node.parent.keys[i] = node.keys[0][0]
+                for i in range(len(node.parent.records)): #atualizo a chave no pai 
+                    if(node.records[0][0] <= node.parent.records[i]):
+                        node.parent.records[i] = node.records[0][0]
                         break
-                print("3 - MUDANÇAS: " , node.parent.keys)
-                print('3 - node:', node.keys)
-                print('3- irmão esquerda:', neighbor_left.keys)
-                return
             else:
-                #caso 2.b
+                #caso 2.b Irmão imediato direita pode emprestar um registro
                 neighbor_right = node.next_key
-                if (neighbor_right and neighbor_right.parent == node.parent and len(neighbor_right.keys) > floor(node.get_order()/2)):
+                if (neighbor_right and neighbor_right.parent == node.parent and len(neighbor_right.records) > floor(node.get_order()/2)):
                     neighbor_right.lend(node, 1)
                     node.delete_key(key)
-                    for i in range(len(node.parent.keys)-1, -1, -1):
-                        print( "i: ", node.parent.keys)
-                        print( "if: ", node.keys[0][0], " - ", node.parent.keys[i])
-                        if (neighbor_right.keys[0][0] >= node.parent.keys[i]):
-                            node.parent.keys[i] = neighbor_right.keys[0][0]
+                    for i in range(len(node.parent.records)-1, -1, -1): #pecorro as chave do pai ao contrario para atualizar a chave
+                        if (neighbor_right.records[0][0] >= node.parent.records[i]):
+                            node.parent.records[i] = neighbor_right.records[0][0]
                             break
-                    print("mudanças: " , node.parent.keys)
-                    print('3 - node:', node.keys)
-                    print('3- irmão direita:', neighbor_right.keys)
                 else: 
-                    #caso 3
+                    #caso 3 Faço fusão com irmão esquerdo ou direito
                     node_merge = None
                     index = -1
-                    if (neighbor_left and neighbor_left.parent == node.parent):
-                        print('4 - FUSÃOOOOOOOO')
-                        print("4 - chegou no irmão esquerda!")
+                    #verifica se possui irmão esquerdo e possui mesmo pai
+                    if (neighbor_left and neighbor_left.parent == node.parent): 
                         node.delete_key(key)
                         index = node.parent.children.index(node)
                         node_merge = neighbor_left.merge(node)
-
-                    elif (neighbor_right and neighbor_right.parent == node.parent):
-                        print('4 - FUSÃOOOOOOOO')
-                        print("chegou no irmão na direita!")
+                    #verifica se possui irmão direito e possui mesmo pai
+                    elif (neighbor_right and neighbor_right.parent == node.parent): 
                         node.delete_key(key)
                         index = node.parent.children.index(node)
                         node_merge = node.merge(neighbor_right)
                     
-                    del node
+                    del node 
                     parent_node = node_merge.parent
 
-                    if (parent_node == self.root and len(self.root.keys) == 1):
+                    if (parent_node == self.root and len(self.root.records) == 1): #caso a raiz dique vazia
                         parent_node = None
-                        self.root = node_merge
+                        self.root = node_merge #atualiza  a raiz pelo novo no que sofreu fusão
                         del node_merge
                         return
-
-                    if (index > 0 and index < len(parent_node.keys)):
-                        print('ENTREI NO CASO 1 DA FUSÃO')
+                    #remove o apontador para filho e a chave que sofreu fusão
+                    if (index > 0 and index < len(parent_node.records)): 
                         parent_node.children.pop(index)
-                        parent_node.keys.pop(index - 1)
+                        parent_node.records.pop(index - 1)
 
                     elif (index == 0):
-                        print('ENTREI NO CASO 2 DA FUSÃO')
                         parent_node.children.pop(index + 1)
-                        parent_node.keys.pop(index)
+                        parent_node.records.pop(index)
                     
                     else:
-                        print('ENTREI NO CASO 3 DA FUSÃO')
                         parent_node.children.pop(-1)
-                        parent_node.keys.pop(-1)
-
-                    if (parent_node != self.root and len(parent_node.keys) < int(floor(parent_node.get_order()/2))):
-                        print("cheguei aqui?")
+                        parent_node.records.pop(-1)
+                    #verifica se nó é diferente da raiz e se o numero de chaves for menor que a ordem 
+                    # chama função para modifcar nó não folha
+                    if (parent_node != self.root and len(parent_node.records) < int(floor(parent_node.get_order()/2))):
                         self.modify_parent(parent_node)
     
     def modify_parent(self, node): #Vai ser usado quando precisar reorganizar os pais do nó quando ficar abaixo da ordem mínima
-     
         parent_node = node.parent
         neighbor_left = neighbor_right = None    
         index = parent_node.children.index(node)
 
-        if(index != 0 or len(node.parent.keys) == index):
+        if(index != 0 or len(node.parent.records) == index):
             neighbor_left = node.parent.children[index - 1]
-            if(len(neighbor_left.keys) > floor(neighbor_left.get_order()/2)):
-                print("cheguei na rotação pela esquerda")
-                print("chaves do no: ", node.parent.children[index].keys)
-                #conferir isso
+            if(len(neighbor_left.records) > floor(neighbor_left.get_order()/2)):
                 node.parent.rotate_keys(neighbor_left, node, index - 1, 0)
                 return
                 
-        elif(index == 0 or index < len(node.parent.keys)): 
+        elif(index == 0 or index < len(node.parent.records)): 
             neighbor_right = node.parent.children[index + 1]
-            if(len(neighbor_right.keys) > floor(neighbor_right.get_order()/2)):
+            if(len(neighbor_right.records) > floor(neighbor_right.get_order()/2)):
                 node.parent.rotate_keys(node, neighbor_right, index + 1, 1)
                 return
         
         if(neighbor_left):
-            print('Fusão esquerda em nó não folha')
-            print('index ', index)
-            print('PARENT NODE', parent_node.keys)
-            key = parent_node.keys.pop(index - 1)
+            key = parent_node.records.pop(index - 1)
             neighbor_left.insert_key(key)
-            neighbor_left.keys += node.keys
+            neighbor_left.records += node.records
             neighbor_left.children += node.children
             
             for c in node.children:
@@ -249,27 +200,20 @@ class BplusTree:
             node = neighbor_left
         
         elif(neighbor_right):
-            print('Fusão direita em nó não folha')
-            #pode ter erro aqui
-            print('Fusão esquerda em nó não folha')
-            print('index ', index)
-            print('PARENT NODE', parent_node.keys)
-            print('NODE: ', node.keys)
-            key = parent_node.keys.pop(index)
+            key = parent_node.records.pop(index)
             node.insert_key(key)
-            node.keys += neighbor_right.keys
+            node.records += neighbor_right.records
             node.children += neighbor_right.children
             
             for c in neighbor_right.children:
                 c.parent = node
-            #conferir aqui
+        
             parent_node.children.pop(index + 1)
 
-        if len(parent_node.keys) == 0 and parent_node == self.root:
-            print("TO AQQQQQQQQQQ DKDLJFKADMFD")
+        if len(parent_node.records) == 0 and parent_node == self.root:
             self.root = node
         
-        elif len(parent_node.keys) < floor(parent_node.get_order()/2) and parent_node != self.root:
+        elif len(parent_node.records) < floor(parent_node.get_order()/2) and parent_node != self.root:
             self.modify_parent(parent_node) 
     
     def print_node_leaf(self):
@@ -281,12 +225,12 @@ class BplusTree:
             node = node.children[0]
 
         while node:
-            print('{}'.format(node.keys), end=' -> ')
+            print('{}'.format(node.records), end=' -> ')
             node = node.next_key
 
 
     def print_tree(self):
-        if (not len(self.root.keys)): 
+        if (not len(self.root.records)): 
             return
 
         delimiter = None
@@ -299,9 +243,9 @@ class BplusTree:
             curr = queue.pop(0)
             if (curr != delimiter):
                 if (curr.is_leaf):
-                    print(curr.keys, end=' -> ')
+                    print(curr.records, end=' -> ')
                 else:
-                    print(curr.keys, end='    ')
+                    print(curr.records, end='    ')
                 if (len(curr.children)):
                     for n in curr.children:
                         queue.append(n)
