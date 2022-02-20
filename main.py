@@ -32,17 +32,17 @@ def main():
         elif n == 4:
             print('A - Maior que um número ( > x)')
             print('B - Menor que um número ( < x)')
-            print('C - Menor ou igual que um número ( <= x)')
-            print('D - Maior ou igual que um número ( >= x)')
-            print('E - Diferente que um número ( <> x)')
-            print('F - Entre dois números (x a y)')
-            op = input('Digite a opção e o número com espaços: ').split()
+            print('C - Entre dois números (x a y)')
+            op = input('Digite a opção e o número(s) com espaços: ').split()
             if op[0] == 'A':
                 print('entrei aq')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), 0, '>')
             if op[0] == 'B':
                 print('entrei aq no B')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), 0, '<')
+            if op[0] == 'C':
+                print('entrei aq no C')
+                tree.interval_search(tree.search(int(op[1])),int(op[1]), int(op[2]), '|')
         elif n == 5:
             tree.print_tree()
 

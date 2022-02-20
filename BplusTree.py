@@ -66,6 +66,14 @@ class BplusTree:
                         print(node.records[:i+1], end="<->")
                         break
                 node = node.previous_record
+        elif(op == '|'):
+            while(node):
+                for i in range(len(node.records)):
+                    if(node.records[i][0]>key and node.records[i][0] < key2):
+                        print(node.records[i], end="<->")
+                    else:
+                        return
+                node = node.next_record
             
         
            
