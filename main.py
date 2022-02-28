@@ -47,7 +47,7 @@ def main():
             tree.print_tree()
 
         elif n == 6:
-            file = open('output.csv', 'r')
+            file = open('10000dpadraodetestes.csv', 'r')
             start = time.time()
             for row in file:
                 record = row.split(',')
@@ -58,7 +58,8 @@ def main():
                     record = [int(x) for x in record[1:]]
                     tree.delete(record[0])
                 end = time.time()
-                print(end - start)
+            file.close()
+            print(end - start)
             
             
         else:
