@@ -50,24 +50,25 @@ class BplusTree:
                 return False
         return True
     
-    def interval_search(self, node, key, key2, op):
+    def interval_search(self, node, key, key2, op): #Função utilizada para busca de intervalos
         if op == '>':
             while node:
-                for i in range(len(node.records)):
+                for i in range(len(node.records)): #Busca por valores maiores que um dado índice
                     if node.records[i][0]>key:
                         print(node.records[i:], end="<->")
                         break
                 node = node.next_record
         elif op == '<':
             while node:
-                for i in range(len(node.records)-1, -1,-1):
+                for i in range(len(node.records)-1, -1,-1): #Busca por valores menores que um dado índice
                     if(node.records[i][0]<key):
                         print(node.records[:i+1], end="<->")
                         break
                 node = node.previous_record
         elif op == '|':
             while node:
-                for i in range(len(node.records)):
+                for i in range(len(node.records)): #É realizado um comparativo entre os extremos do intervalo
+                                                    # o indice de cada registro é comparado com cada um deles. 
                     if node.records[i][0]>key and node.records[i][0] < key2:
                         print(node.records[i], end="<->")
                     else:
@@ -196,51 +197,51 @@ class BplusTree:
     def modify_parent(self, node): #Vai ser usado quando precisar reorganizar os pais do nó quando ficar abaixo da ordem mínima
         parent_node = node.parent
         neighbor_left = neighbor_right = None    
-        index = parent_node.children.index(node)
+        index = parent_node.children.index(node) #Procura pelo nó passado por referencia no pai do nó, ou seja busca a posição daquele nó
 
-        if index != 0 or len(node.parent.records) == index:
-            neighbor_left = node.parent.children[index - 1]
-            if len(neighbor_left.records) > floor(neighbor_left.get_order()/2):
-                node.parent.rotate_keys(neighbor_left, node, index - 1, 0)
+        if index != 0 or len(node.parent.records) == index: #Se o índice for diferente de zero ou esse índice é o ultimo 
+            neighbor_left = node.parent.children[index - 1]  #O vizinho da esquerda recebe o nó da esquerda do nó passado por referência
+            if len(neighbor_left.records) > floor(neighbor_left.get_order()/2): #Se o irmão da esquerda puder emprestar 
+                node.parent.rotate_keys(neighbor_left, node, index - 1, 0) #É realizada uma rotação de chaves 
                 return
                 
-        elif index == 0 or index < len(node.parent.records): 
-            neighbor_right = node.parent.children[index + 1]
-            if len(neighbor_right.records) > floor(neighbor_right.get_order()/2):
-                node.parent.rotate_keys(node, neighbor_right, index + 1, 1)
+        elif index == 0 or index < len(node.parent.records): #Se o índice for igual a zero e ele for menor que o último 
+            neighbor_right = node.parent.children[index + 1] #o irmão da direita recebe o nó da direita do nó passado por referência
+            if len(neighbor_right.records) > floor(neighbor_right.get_order()/2): #Se o irmão da direita puder emprestar 
+                node.parent.rotate_keys(node, neighbor_right, index + 1, 1) #É realizada uma rotação de chaves
                 return
         
-        if neighbor_left:
-            key = parent_node.records.pop(index - 1)
-            neighbor_left.insert_key(key)
-            neighbor_left.records += node.records
-            neighbor_left.children += node.children
+        if neighbor_left: #Se eu tenho um irmão da esquerda 
+            key = parent_node.records.pop(index - 1) #Removo o irmão a esquerda do índice
+            neighbor_left.insert_key(key) #Insiro na esquerda esse irmão 
+            neighbor_left.records += node.records #Reorganizo os registros
+            neighbor_left.children += node.children #Reorganizo os filhos 
             
-            for c in node.children:
+            for c in node.children: # Para cada filho os pais são atualizados
                 c.parent = neighbor_left
             
-            parent_node.children.pop(index)
-            node = neighbor_left
+            parent_node.children.pop(index) #O filho do pai do nó é removido 
+            node = neighbor_left #O nó recebe o vizinho da esquerda
         
-        elif neighbor_right:
-            key = parent_node.records.pop(index)
-            node.insert_key(key)
-            node.records += neighbor_right.records
-            node.children += neighbor_right.children
-            
-            for c in neighbor_right.children:
+        elif neighbor_right: #Se eu tenho um vizinho da direita 
+            key = parent_node.records.pop(index) #Removo o irmão da direita do índice
+            node.insert_key(key) #Insiro na esquerda esse irmão 
+            node.records += neighbor_right.records #Reorganizo os registros
+            node.children += neighbor_right.children #Reorganizo os filhos
+             
+            for c in neighbor_right.children: # Para cada filho os pais são atualizados
                 c.parent = node
         
-            parent_node.children.pop(index + 1)
+            parent_node.children.pop(index + 1)  #O filho do pai do nó é removido 
 
-        if len(parent_node.records) == 0 and parent_node == self.root:
+        if len(parent_node.records) == 0 and parent_node == self.root: #Se o pai do nó ficou sem chaves, seto o nó como raiz
             self.root = node
         
-        elif len(parent_node.records) < floor(parent_node.get_order()/2) and parent_node != self.root:
-            self.modify_parent(parent_node) 
+        elif len(parent_node.records) < floor(parent_node.get_order()/2) and parent_node != self.root: #Se o pai do nó ficou abaixo do mínimo e não é raiz
+            self.modify_parent(parent_node) #Modifico o pai do nó
     
     
-    def print_tree(self):
+    def print_tree(self): #Print por nível da árvore
         if not len(self.root.records): 
             return
 
@@ -249,14 +250,14 @@ class BplusTree:
 
         queue.append(self.root)
         queue.append(delimiter)
-        while True:
+        while True: 
             curr = queue.pop(0)
-            if curr != delimiter:
+            if curr != delimiter: #É utilizado um delimitador para cada nível da árvore
                 if curr.is_leaf:
-                    print(curr.records, end=' <-> ')
+                    print(curr.records, end=' <-> ') 
                 else:
                     print(curr.records, end='    ')
-                if len(curr.children):
+                if len(curr.children): #Se ainda estiver no nível adiciono as chaves à fila
                     for n in curr.children:
                         queue.append(n)
             else:
