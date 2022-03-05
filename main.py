@@ -1,5 +1,5 @@
 from BplusTree import BplusTree
-import time
+from time import time
 
 def main():
     len_page = int(input('Digite o tamanho da página em bytes: '))
@@ -23,12 +23,15 @@ def main():
                 tree.insert(record[0], record)
             else:
                 print('Tamanho de campos no registro não corresponde com o informado.')
+
         elif n == 2:
             key = int(input('Digite a chave do registro para ser removido: '))
             tree.delete(key)
+
         elif n == 3:
             key = int(input('Digite a chave para ser buscado o registro: '))
             tree.search_key(tree.search(key), key)
+
         elif n == 4:
             print('A - Maior que um número ( > x)')
             print('B - Menor que um número ( < x)')
@@ -43,12 +46,13 @@ def main():
             if op[0] == 'C':
                 print('entrei aq no C')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), int(op[2]), '|')
+
         elif n == 5:
             tree.print_tree()
 
         elif n == 6:
-            file = open('10000dpadraodetestes.csv', 'r')
-            start = time.time()
+            file = open('test_files/a5i10000d1000.csv', 'r')
+            start = time()
             for row in file:
                 record = row.split(',')
                 if(record[0] == '+'):
@@ -57,11 +61,10 @@ def main():
                 elif(record[0] == '-'):
                     record = [int(x) for x in record[1:]]
                     tree.delete(record[0])
-                end = time.time()
-            file.close()
+                end = time()
             print(end - start)
-            
-            
+            file.close()
+        
         else:
             break
         #except:
