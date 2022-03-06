@@ -9,7 +9,7 @@ def main():
     while(True):  #Menu de ações da Arvore B+         
         print('\n1. Inserir registro na Árvore')
         print('2. Remover registro da Árvore')
-        print('3. Buscar registro na Árvore')
+        print('3. Buscar registro por igualdade na Árvore')
         print('4. Buscar registros por intervalo na Árvore')
         print('5. Mostrar B+')
         print('6. Executar casos de teste')
@@ -18,7 +18,7 @@ def main():
         n = int(input('Digite uma opção: '))
         if n == 1:
             #Informe os campos separados por virgula
-            record = [int(x) for x in input('Informe o registro completo com todos os campos:').split(',')]
+            record = [int(x) for x in input('Informe o registro completo com todos os campos separados por virgula ",": ').split(',')]
             if len(record) == qty_fields:
                 tree.insert(record[0], record)
             else:
@@ -30,7 +30,9 @@ def main():
 
         elif n == 3:
             key = int(input('Digite a chave para ser buscado o registro: '))
-            tree.search_key(tree.search(key), key)
+            rec = tree.search_key(tree.search(key), key)
+            if rec:
+                print('Registro: ', rec)
 
         elif n == 4:
             print('A - Maior que um número ( > x)')
@@ -38,20 +40,17 @@ def main():
             print('C - Entre dois números (x a y)')
             op = input('Digite a opção e o número(s) com espaços: ').split()
             if op[0] == 'A':
-                print('entrei aq')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), 0, '>')
             if op[0] == 'B':
-                print('entrei aq no B')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), 0, '<')
             if op[0] == 'C':
-                print('entrei aq no C')
                 tree.interval_search(tree.search(int(op[1])),int(op[1]), int(op[2]), '|')
 
         elif n == 5:
             tree.print_tree()
 
         elif n == 6:
-            file = open('test_files/a5i10000d1000.csv', 'r')
+            file = open('test_files/a5i1000d1000.csv', 'r')
             start = time()
             for row in file:
                 record = row.split(',')

@@ -12,13 +12,11 @@ class BplusTree:
         vet_ = [1] * qty_fields #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
         order_leaf = len_page//sys.getsizeof(vet_) #tamanho da página em bytes pelo tamanho do registro em bytes
         order_nleaf = len_page//sys.getsizeof(1)
-        print("order_folha: ", order_leaf)
-        print("order_not_folha: ", order_nleaf)
         return (order_leaf, order_nleaf)
 
     def insert(self, key, record): #Método para inserção dos registros
         node = self.search(key) #Busco o nó o qual o registro será inserido
-        if self.search_key(node, key):
+        if not self.search_key(node, key):
             if len(node.records) == node.get_order(): #Caso o nó esteja cheio 
                 node_right = node.split_node(key, record) #Será realizado a divisão 
                 if node_right:
@@ -47,32 +45,31 @@ class BplusTree:
     def search_key(self, node_, key): #Pesquisa por igualdade
         for k in node_.records:     #Percorro e verifico se o registro está presente no nó
             if key == k[0]:
-                return False
-        return True
+                return k
+        return None
     
     def interval_search(self, node, key, key2, op): #Função utilizada para busca de intervalos
         if op == '>':
             while node:
                 for i in range(len(node.records)): #Busca por valores maiores que um dado índice
                     if node.records[i][0]>key:
-                        print(node.records[i:], end="<->")
+                        print(node.records[i:], end=" <-> ")
                         break
                 node = node.next_record
         elif op == '<':
             while node:
                 for i in range(len(node.records)-1, -1,-1): #Busca por valores menores que um dado índice
                     if(node.records[i][0]<key):
-                        print(node.records[:i+1], end="<->")
+                        print(node.records[:i+1], end=" <-> ")
                         break
                 node = node.previous_record
         elif op == '|':
             while node:
                 for i in range(len(node.records)): #É realizado um comparativo entre os extremos do intervalo
                                                     # o indice de cada registro é comparado com cada um deles. 
-                    if node.records[i][0]>key and node.records[i][0] < key2:
-                        print(node.records[i], end="<->")
-                    else:
-                        return
+                    if node.records[i][0] > key and node.records[i][0] < key2:
+                        print(node.records[i], end=" <-> ")
+                     
                 node = node.next_record
             
     def __insert_parent(self, node_left, key, node_right): #Utilizada na divisão ao inserir 
