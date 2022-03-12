@@ -1,6 +1,6 @@
 from Node import Node
 from math import floor, ceil
-import sys
+from sys import getsizeof, maxsize
 
 class BplusTree:
     def __init__(self, len_page, qty_fields ) -> None: #Construtor da arvore B+
@@ -9,9 +9,9 @@ class BplusTree:
         self.root.is_leaf = True
     
     def calc_order(self, len_page, qty_fields): #Calcula a ordem baseada no tamanho da página e quantidade de campos
-        vet_ = [1] * qty_fields #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
-        order_leaf = len_page//sys.getsizeof(vet_) #tamanho da página em bytes pelo tamanho do registro em bytes
-        order_nleaf = len_page//sys.getsizeof(1)
+        vet_ = [maxsize] * qty_fields #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
+        order_leaf = len_page//getsizeof(vet_) #tamanho da página em bytes pelo tamanho do registro em bytes
+        order_nleaf = len_page//getsizeof(1)
         return (order_leaf, order_nleaf)
 
     def insert(self, key, record): #Método para inserção dos registros
