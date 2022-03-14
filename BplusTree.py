@@ -11,7 +11,7 @@ class BplusTree:
     def calc_order(self, len_page, qty_fields): #Calcula a ordem baseada no tamanho da página e quantidade de campos
         vet_ = [maxsize] * qty_fields #Crio um vetor de inteiros auxiliar com a quantidade de campos informados
         order_leaf = len_page//getsizeof(vet_) #tamanho da página em bytes pelo tamanho do registro em bytes
-        order_nleaf = len_page//getsizeof(1)
+        order_nleaf = len_page//getsizeof(maxsize)
         return (order_leaf, order_nleaf)
 
     def insert(self, key, record): #Método para inserção dos registros
@@ -23,9 +23,7 @@ class BplusTree:
                     self.__insert_parent(node, node_right.records[0][0], node_right) #Após isso será inserido a chave no nó pai e realizado os apontamentos
             else:
                 node.insert_key_leaf(key, record) #Insere o registro na folha
-        else:
-            print('Chave já inserida.')
-
+  
     def search(self, key): #Pesquisa em qual nó será inserido o registro 
         node_ = self.root #Inicia a busca pela raiz
         while not node_.is_leaf: #Enquanto não encontrar um nó folha o laço permanece
@@ -110,7 +108,6 @@ class BplusTree:
 
                     self.__insert_parent(parent_left, value, parent_right) # O valor de value será subido na divisão de páginas 
                     break
-
                 elif temp[i] == node_left: #Se a raiz não estiver cheia apenas subo uma chave para ela.
                     parent_left.records = parent_left.records[:i] + [key] + parent_left.records[i:]
                     parent_left.children = parent_left.children[:i + 1] + [node_right] + parent_left.children[i + 1:]

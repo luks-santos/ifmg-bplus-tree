@@ -1,3 +1,16 @@
+""" 
+/*********************************************************
+ * Trabalho da disciplina de Banco de Dados II           *
+ *                     Arvore B+                         *
+ *                                                       *
+ * Curso: Bacharelado em Engenharia da Computação        *
+ * Professor: Marcos Roberto Ribeiro                     *
+ *                                                       *
+ * Autores:                                              *
+ * Lucas Batista dos Santos - 0048505                    *                                                *
+ * Jorge Luís Vieira Murilo - 0027752                    *
+ ********************************************************/ 
+ """
 from BplusTree import BplusTree
 from time import time
 
@@ -14,10 +27,9 @@ def main():
         print('5. Mostrar B+')
         print('6. Executar casos de teste')
         print('0. Sair')
-        #try:
+
         n = int(input('Digite uma opção: '))
         if n == 1:
-            #Informe os campos separados por virgula
             record = [int(x) for x in input('Informe o registro completo com todos os campos separados por virgula ",": ').split(',')]
             if len(record) == qty_fields:
                 tree.insert(record[0], record)
@@ -66,8 +78,6 @@ def main():
         
         else:
             break
-        #except:
-         #   print('Algo deu errado!')
 
 if __name__ == '__main__':
     main()
