@@ -6,8 +6,8 @@
 
 Para utilização do código implementado há duas possiveis maneiras.
 
-- 1º [Inserção](# Introdução), [deleção](#deleção) e [busca](#busca) manuais
-- 2º [Caso de testes automatizado](#caso de testes automatizado)
+1. [Inserção](#inserção), [deleção](#deleção) e [busca](#busca) manuais.
+2. [Caso de testes automatizado](#caso-de-testes-automatizado).
 
 # Como usar
 
